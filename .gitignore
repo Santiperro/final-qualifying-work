@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 
 docs-example
+data
