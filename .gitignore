@@ -153,3 +153,4 @@ cython_debug/
 
 docs-example
 data
+auth
