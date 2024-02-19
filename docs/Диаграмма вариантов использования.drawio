@@ -1,119 +1,110 @@
-<mxfile host="app.diagrams.net" modified="2023-11-27T13:03:18.171Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.686 YaBrowser/23.9.5.686 Yowser/2.5 Safari/537.36" etag="UX4hmZI41evMg0gzXQau" version="22.1.4" type="device">
+<mxfile host="app.diagrams.net" modified="2024-02-18T20:00:48.127Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0" etag="SDVdjy4ns6jBYsWjM6w2" version="22.1.21" type="device">
   <diagram name="Страница — 1" id="YCPJfEhBiTIOSu7KVcG3">
-    <mxGraphModel dx="2868" dy="1534" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1554" dy="857" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="RtkTmfn92HBH9twl6TN6-38" value="" style="rounded=0;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="1">
-          <mxGeometry x="30" y="330" width="589" height="470" as="geometry" />
+        <mxCell id="RtkTmfn92HBH9twl6TN6-38" value="" style="rounded=0;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="320" width="589" height="470" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-1" value="Пользователь" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
-          <mxGeometry x="80" y="670" width="30" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-2" value="" style="rounded=0;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-2" value="" style="rounded=0;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" parent="1" vertex="1">
           <mxGeometry x="180" y="360" width="410" height="410" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-3" value="Система поиска шаблонов в данных портала Github" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-3" value="Система поиска шаблонов в данных портала Github" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="180" y="360" width="410" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-7" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Загрузить данные из API github в БД&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-7" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Загрузить данные в базу данных&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="200" y="410" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-8" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выбрать параметры запрашиваемых данных&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-8" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выбрать параметры данных&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="460" y="410" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-9" value="" style="endArrow=none;html=1;rounded=0;fontSize=10;jumpStyle=arc;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-1" target="RtkTmfn92HBH9twl6TN6-20">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="150" y="540" as="sourcePoint" />
-            <mxPoint x="202" y="586" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-23" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-7" target="RtkTmfn92HBH9twl6TN6-8">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-23" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" parent="1" source="RtkTmfn92HBH9twl6TN6-7" target="RtkTmfn92HBH9twl6TN6-8" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="265" y="570" as="sourcePoint" />
             <mxPoint x="265" y="470" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-24" value="&amp;lt;&amp;lt;Include&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-24" value="&amp;lt;&amp;lt;Include&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="354" y="410" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-27" value="Администратор&lt;br&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
-          <mxGeometry x="80" y="410" width="30" height="60" as="geometry" />
+        <mxCell id="RtkTmfn92HBH9twl6TN6-27" value="Пользователь" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="70" y="535" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-28" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-7">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-28" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-7" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="310" y="630" as="sourcePoint" />
-            <mxPoint x="120" y="440" as="targetPoint" />
+            <mxPoint x="120" y="560" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-4" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Экспортировать шаблоны&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-4" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Экспортировать шаблоны&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="460" y="690" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-5" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;jumpStyle=arc;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-4" target="RtkTmfn92HBH9twl6TN6-20">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-5" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;jumpStyle=arc;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-4" target="RtkTmfn92HBH9twl6TN6-20" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="460" y="530" as="sourcePoint" />
             <mxPoint x="323" y="685" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-6" value="&amp;lt;&amp;lt;Extend&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-6" value="&amp;lt;&amp;lt;Extend&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="360" y="690" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-12" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выполнить поиск шаблонов&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-12" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выполнить поиск шаблонов&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="200" y="595" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-13" value="&amp;lt;&amp;lt;Include&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-13" value="&amp;lt;&amp;lt;Include&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="270" y="655" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-16" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выбрать пороговые значения поиска шаблонов&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-16" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выбрать пороговые значения поиска шаблонов&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="460" y="595" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-17" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-16" target="RtkTmfn92HBH9twl6TN6-12">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-17" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-16" target="RtkTmfn92HBH9twl6TN6-12" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="455" y="639" as="sourcePoint" />
             <mxPoint x="299" y="615" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-18" value="&amp;lt;&amp;lt;Extend&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-18" value="&amp;lt;&amp;lt;Extend&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="360" y="520" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-10" value="&amp;lt;&amp;lt;Extend&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-10" value="&amp;lt;&amp;lt;Extend&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="360" y="595" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-20" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Просмотреть список шаблонов&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-20" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Просмотреть шаблоны&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="200" y="690" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-21" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;jumpStyle=arc;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-20" target="RtkTmfn92HBH9twl6TN6-12">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-21" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;jumpStyle=arc;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-20" target="RtkTmfn92HBH9twl6TN6-12" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="420" y="470" as="sourcePoint" />
             <mxPoint x="470" y="420" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-29" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-20">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-29" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.153;entryY=0.511;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-20" edge="1" target="RtkTmfn92HBH9twl6TN6-38">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="210" y="370" as="sourcePoint" />
             <mxPoint x="120" y="440" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-30" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выбрать &lt;br&gt;данные&amp;nbsp;из БД&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-30" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Выбрать &lt;br&gt;данные&amp;nbsp;из базы данных&amp;nbsp;&lt;br&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="200" y="500" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-33" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;jumpStyle=arc;edgeStyle=orthogonalEdgeStyle;entryX=0.503;entryY=1.039;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryPerimeter=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-12" target="RtkTmfn92HBH9twl6TN6-30">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-33" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;jumpStyle=arc;edgeStyle=orthogonalEdgeStyle;entryX=0.503;entryY=1.039;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryPerimeter=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-12" target="RtkTmfn92HBH9twl6TN6-30" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="255.25" y="595" as="sourcePoint" />
             <mxPoint x="254.25" y="555" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-34" value="&amp;lt;&amp;lt;Include&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-34" value="&amp;lt;&amp;lt;Include&amp;gt;&amp;gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;container=0;" parent="1" vertex="1">
           <mxGeometry x="270" y="565" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-35" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;entryX=0.89;entryY=0.171;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="RtkTmfn92HBH9twl6TN6-36" target="RtkTmfn92HBH9twl6TN6-12">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-35" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;entryX=0.89;entryY=0.171;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="RtkTmfn92HBH9twl6TN6-36" target="RtkTmfn92HBH9twl6TN6-12" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="470" y="635" as="sourcePoint" />
             <mxPoint x="320" y="635" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="RtkTmfn92HBH9twl6TN6-36" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;Выбрать состав транзакции&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="RtkTmfn92HBH9twl6TN6-36" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;Выбрать состав транзакции&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="460" y="500" width="110" height="60" as="geometry" />
         </mxCell>
       </root>
