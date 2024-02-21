@@ -4,7 +4,34 @@ from mlxtend.frequent_patterns import association_rules
 
 
 class PatternMiner():
-    def mine_patterns(self, data, min_supp, min_conf, min_lift, max_left_elements=3, max_right_elements=1):
+    def mine_patterns(self, 
+                      data, 
+                      min_supp, 
+                      min_conf,
+                      min_lift,
+                      max_left_elements=3, 
+                      max_right_elements=1):
+        """
+        Метод для поиска паттернов в данных.
+
+        Параметры:
+        :param data: Данные для анализа.
+        :type data: pandas.DataFrame
+        :param min_supp: Минимальное значение поддержки.
+        :type min_supp: float
+        :param min_conf: Минимальное значение уверенности.
+        :type min_conf: float
+        :param min_lift: Минимальное значение подъема.
+        :type min_lift: float
+        :param max_left_elements: Максимальное количество элементов в антецеденте.
+        :type max_left_elements: int
+        :param max_right_elements: Максимальное количество элементов в консеквенте.
+        :type max_right_elements: int
+
+        Возвращает:
+        :return: Правила ассоциации.
+        :rtype: pandas.DataFrame
+        """
         def rename_column(name):
             if '_' in name:
                 return name[name.index("_") + 1:]

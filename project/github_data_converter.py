@@ -3,37 +3,97 @@ import numpy as np
 
 
 class GithubDataConverter():
+    def convert_data_to_transactions(self, 
+                                     repos_data:pd.DataFrame,
+                                     quantiles_data: pd.DataFrame):
+        """
+        Метод для преобразования данных репозиториев в транзакции.
 
-    def merge_data_tables_by_repo(self, table1, table2):
-        repos_data = table1.join(table2.set_index("repo"), on="repo")
-        repos_data.drop_duplicates(inplace=True)
-        return repos_data.drop('repo', axis=1)
+        Параметры:
+        :param repos_data: Данные репозиториев.
+        :type repos_data: pandas.DataFrame
+        :param quantiles_data: Данные квантилей.
+        :type quantiles_data: pandas.DataFrame
+
+        Возвращает:
+        :return: Транзакции.
+        :rtype: pandas.DataFrame
+        """
+        cleaned_data = self._clean_data(repos_data)
+        cleaned_data = self._convert_data_to_quantiles(cleaned_data, quantiles_data)
+        transactions = self._convert_quantiles_to_items(cleaned_data, [0.75, 0.85, 0.95, 0.99, 0.999])
+        return transactions
     
-    def convert_data_to_quantiles(self, repos_data, quantiles_data: pd.DataFrame):
-        repos_data_copy = repos_data.copy()
-        
+    def _clean_data(self, repo_data: pd.DataFrame):
+        """
+        Метод для очистки данных репозиториев.
+
+        Параметры:
+        :param repo_data: Данные репозиториев.
+        :type repo_data: pandas.DataFrame
+
+        Возвращает:
+        :return: Очищенные данные.
+        :rtype: pandas.DataFrame
+        """
+        clean_data = repo_data.drop_duplicates()
+        clean_data.drop('repo', axis=1, inplace=True)
+        return clean_data
+    
+    def _convert_data_to_quantiles(self, repo_data: pd.DataFrame, 
+                                        quantiles_data: pd.DataFrame):
+        """
+        Метод для преобразования данных репозиториев в квантили.
+
+        Параметры:
+        :param repo_data: Данные репозиториев.
+        :type repo_data: pandas.DataFrame
+        :param quantiles_data: Данные квантилей.
+        :type quantiles_data: pandas.DataFrame
+
+        Возвращает:
+        :return: Данные репозиториев, преобразованные в квантили.
+        :rtype: pandas.DataFrame
+        """
         def find_nearest_quantile(value, quantiles):
             return (quantiles - value).abs().idxmin()
-    
-        for column in repos_data_copy.select_dtypes(include=[np.number]).columns:
-            if column in quantiles_data.columns:
-                repos_data_copy[column] = repos_data_copy[column].apply(find_nearest_quantile, quantiles=quantiles_data[column])
         
-        return repos_data_copy
+        repo_data_copy = repo_data.copy()
 
-    def encode_quantiles(self, quantile_data, quantiles): 
+        for column in repo_data_copy.select_dtypes(include=[np.number]).columns:
+            if column in quantiles_data.columns:
+                repo_data_copy[column] = repo_data_copy[column].apply(find_nearest_quantile, quantiles=quantiles_data[column])
+                
+        return repo_data_copy
+                
+    def _convert_quantiles_to_items(self, 
+                         data_with_quantiles:pd.DataFrame, 
+                         quantile_values):
+        """
+        Метод для преобразования квантилей в элементы транзакции.
+
+        Параметры:
+        :param data_with_quantiles: Данные с квантилями.
+        :type data_with_quantiles: pandas.DataFrame
+        :param quantile_values: Значения квантилей.
+        :type quantile_values: list
+
+        Возвращает:
+        :return: Данные с квантилями, преобразованные в элементы.
+        :rtype: pandas.DataFrame
+        """
+        quantile_data_copy = data_with_quantiles.copy()
         
-        quantile_data_copy = quantile_data.copy()
         # Cловарь для кодирования квантилей
         quantile_encoding = {
-            quantiles[0]: 'Мало',
-            quantiles[1]: 'Среднее число',
-            quantiles[2]: 'Выше среднего',
-            quantiles[3]: 'Много',
-            quantiles[4]: 'Очень много'
+            quantile_values[0]: 'Мало',
+            quantile_values[1]: 'Среднее число',
+            quantile_values[2]: 'Выше среднего',
+            quantile_values[3]: 'Много',
+            quantile_values[4]: 'Очень много'
         }
 
-        # Cловарь для кодирования столбцов
+        # Cловарь для декодирования столбцов
         column_encoding = {
             'pushes': 'пушей',
             'avg_push_size': 'размера пушей',
