@@ -5,7 +5,7 @@ from mlxtend.frequent_patterns import association_rules
 
 class PatternMiner():
     def mine_patterns(self, 
-                      data, 
+                      transactions_matrix, 
                       min_supp, 
                       min_conf,
                       min_lift,
@@ -37,9 +37,6 @@ class PatternMiner():
                 return name[name.index("_") + 1:]
             return name
         
-        def replace_symbols(string):
-            return string.replace('_', '-')
-        
         def cell_to_string(cell):
             if not isinstance(cell, str):
                 try:
@@ -52,24 +49,12 @@ class PatternMiner():
                 except TypeError:
                     pass
             return cell
-        
-        data_copy = data.copy()
-        
-        if 'is_deleted_or_private' in data_copy.columns:
-            data_copy = data_copy.rename(columns={'is_deleted_or_private': 'Удален или скрыт'})
-        
-        for column in data_copy.columns:
-            data_copy.rename(
-                columns={column: replace_symbols(column)},
-                inplace=True)
-            
-        transactions_matrix = pd.get_dummies(data_copy)
 
         # editing column names
-        for column in transactions_matrix.columns:
-            transactions_matrix.rename(
-                columns={column: rename_column(column)},
-                inplace=True)
+        # for column in transactions_matrix.columns:
+        #     transactions_matrix.rename(
+        #         columns={column: rename_column(column)},
+        #         inplace=True)
 
         # Поиск частых наборов с параметром минимальной поддержки
         freaquent_itemsets = apriori(transactions_matrix, min_support=min_supp, use_colnames=True)

@@ -80,58 +80,6 @@ class ServiceConnector():
         repo_data = clickhouse_data.join(github_api_data.set_index("repo"), on="repo")
         return repo_data
     
-    def get_quantiles(self, start_date, end_date, table_columns, quantiles):
-        """
-        Метод для получения квантилей для указанных столбцов таблицы.
-
-        Параметры:
-        :param start_date: Начальная дата для запроса данных.
-        :type start_date: str
-        :param end_date: Конечная дата для запроса данных.
-        :type end_date: str
-        :param table_columns: Список столбцов таблицы, для которых нужно получить квантили.
-        :type table_columns: list
-        :param quantiles: Список квантилей, которые нужно получить.
-        :type quantiles: list
-
-        Возвращает:
-        :return: DataFrame, содержащий квантили для указанных столбцов.
-        :rtype: pandas.DataFrame
-        """
-        REQUESTS_DELAY = 3
-
-        COLUMN_NAME_QUANTILE_QUERY = {
-            'forks': FORKS_QUANTILES_QUERY, 
-            'pushes': PUSHES_QUANTILES_QUERY, 
-            'avg_push_size': AVG_PUSH_SIZE_QUANTILES_QUERY,
-            'pull_requests': PULL_REQUESTS_QUANTILES_QUERY,
-            'merged_pull_requests_ratio': MERGED_PULL_REQUESTS_RATIO_QUANTILES_QUERY,
-            'issues': ISSUES_QUANTILES_QUERY,
-            'closed_issues_ratio': CLOSED_ISSUES_RATIO_QUANTILES_QUERY, 
-            'watches': WATCHES_QUANTILES_QUERY}
-        
-        if not table_columns or len(table_columns) == 0:
-            return
-    
-        filtered_table_columns = [item for item in table_columns if item in COLUMN_NAME_QUANTILE_QUERY]
-        
-        deciles_df = pd.DataFrame(columns=quantiles)
-        
-        for column in filtered_table_columns:
-            query = COLUMN_NAME_QUANTILE_QUERY[column].format( 
-                start_date=start_date, 
-                end_date=end_date,
-                quantile1 = quantiles[0],
-                quantile2 = quantiles[1],
-                quantile3 = quantiles[2],
-                quantile4 = quantiles[3],
-                quantile5 = quantiles[4])
-            
-            quantiles_df = self.__get_clickhouse_data(query, delay=3, quantiles=True)
-            deciles_df.loc[column] = list(quantiles_df["quantiles"])
-        deciles_df = deciles_df.astype(float)
-        return deciles_df.T
-    
     async def _fetch(self, session, url):
         async with session.get(url, headers=self.headers) as response:
             return await response.json(), response.status
