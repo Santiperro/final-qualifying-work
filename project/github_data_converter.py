@@ -49,15 +49,15 @@ class GithubDataConverter():
         :type: pandas.DataFrame
         """
         def edit_column_names(string):
-            string = string.replace('_', '', 1)  # Заменяем только первый символ '_'
-            string = string.replace('_', ' ')  # Заменяем все остальные символы '_'
+            string = string.replace('_', '', 1)  # Удаление только первых символов '_'
+            string = string.replace('_', ' ')  # Замена всех остальных символов '_' на пробел
             return string
         
         cleaned_data = self._clean_data(repos_data)
-        column_quantile_values = self._find_quantile_columns(cleaned_data, quantile_type=quantile_type)
+        column_quantile_values = self._find_quantile_columns(cleaned_data, quantile_type=quantile_type) #TODO Переместить в _convert_data_to_quantiles
         quantile_data = self._convert_data_to_quantiles(cleaned_data, column_quantile_values)
         
-        # форматирование числовых значений
+        # Форматирование числовых значений согласно схеме ROUNDING
         for column, (decimals, dtype) in self.ROUNDING.items():
             if column in quantile_data.columns:
                 quantile_data[column] = quantile_data[column].round(decimals)
