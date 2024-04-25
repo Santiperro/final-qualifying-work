@@ -9,7 +9,7 @@ class GithubDataParams(models.Model):
 
 class GithubData(models.Model):
     data_params_id = models.OneToOneField(GithubDataParams, on_delete=models.CASCADE)
-    repo_name = models.CharField(max_lenght=200, null=True)
+    repo_name = models.CharField(max_length=200, null=True)
     pushes = models.IntegerField(null=True)
     avg_push_size = models.FloatField(null=True)
     pull_requests = models.IntegerField(null=True)
@@ -21,4 +21,3 @@ class GithubData(models.Model):
     language = models.CharField(max_length=200, null=True)
     license_name = models.CharField(max_length=200, null=True)
     is_deleted_or_private = models.BooleanField(null=True)
-    

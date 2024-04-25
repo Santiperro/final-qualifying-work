@@ -18,7 +18,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'github_patterns_app'
+    'github_patterns_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,9 +66,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': env('DB_NAME'), 
         'USER': env('DB_USER'), 
-        'PASSWORD': env('root'),
+        'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'), 
-        'PORT': env('5432'),
+        'PORT': env('DB_PORT'),
     }
 }
 

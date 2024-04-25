@@ -9,82 +9,163 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from exceptions.invalid_date_format_exception import InvalidDateFormatException
 from queries import *
+import json
 
 
 class ServiceConnector():
     CLICKHOUSE_REQUEST_URL = 'https://play.clickhouse.com/play?user=play'
     GITHUB_API_REQUEST_URL = 'https://api.github.com/repos/{repo_name}'
+    REQUEST_DELAY = 45
+    
+    DEFAULT_LIMIT = 1000
+    DEFAULT_WATCH_EVENT_COUNT = 10
+    DEFAULT_NEW_MEMBERS_COUNT = 3
+    
+    TYPES_DICT = {"int": int, 
+                  "float": float, 
+                  "str:": str, 
+                  "bool": bool}
     
     def __init__(self):
         # self.token = getpass.getpass('Введите ваш GitHub токен: ')
-        self.github_api_token = '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'
+        self.github_api_token = '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'
         self.headers = {'Authorization': f'token {self.github_api_token}'}
+        self.data_configuration = pd.read_json("dtype_conf.json")
             
-    async def get_data(self, start_date: str,
-                 end_date: str | None = None,  
-                 limit=1000,
-                 repo_watch_event_count=10,
-                 repo_members_count=3):
+    async def get_data_from_services(self, 
+                       transaction_composition: dict[str, str],
+                       start_date: str,
+                       end_date: str | None = None,  
+                       limit: int = DEFAULT_LIMIT,
+                       min_watch_event_count: int = DEFAULT_WATCH_EVENT_COUNT,
+                       min_new_members_count: int = DEFAULT_NEW_MEMBERS_COUNT,
+                       is_new_repos: bool = False) -> pd.DataFrame:
         """
-        Асинхронный метод для получения данных из ClickHouse и GitHub API.
-
-        Параметры:
-        :param start_date: Начальная дата для запроса данных.
-        :type start_date: str
-        :param end_date: Конечная дата для запроса данных. Если не указана, то используется start_date.
-        :type end_date: str, optional
-        :param limit: Ограничение на количество строк в запросе к ClickHouse.
-        :type limit: int, optional
-        :param repo_watch_event_count: Количество событий "watch" в репозитории.
-        :type repo_watch_event_count: int, optional
-        :param repo_members_count: Количество участников в репозитории.
-        :type repo_members_count: int, optional
-
-        Возвращает:
-        :return: DataFrame, содержащий данные из ClickHouse и GitHub API.
-        :rtype: pandas.DataFrame
+        transaction_composition example:
+        {'pushes': 'dec',
+        'avg_push_size': 'dec',
+        'pull_requests': 'qua',
+        'merged_pull_requests_ratio': 'dec',
+        'issues': 'dec',
+        'closed_issues_ratio': 'qua',
+        'watches': 'dec',
+        'forks': 'dec',
+        'new_members': 'dec',
+        'language': 'None',
+        'license_name': 'None',
+        'is_deleted_or_private': 'None'}
         """
-        REQUEST_DELAY = 8
         
+        # params validation
         if not start_date:
-            return
+            raise ValueError("start_date не может быть пустым")
         
         if not end_date:
             end_date = start_date
         
-        if not (self.__validate_date(start_date) 
-                and self.__validate_date(end_date)):
-            return
+        self.__validate_date_range(start_date, end_date)
         
+        query = self.__get_query_by_params(start_date,
+                                           end_date, 
+                                           limit,
+                                           min_watch_event_count,
+                                           min_new_members_count,
+                                           is_new_repos)
+        
+        clickhouse_data = self.__get_clickhouse_data(query, self.REQUEST_DELAY)
+        clickhouse_data = self.__filter_clickhouse_data_columns(clickhouse_data, 
+                                                        transaction_composition)
+        
+        api_columns = self.__get_github_api_columns(transaction_composition)
+        github_api_data = await self.__get_github_api_data(
+                                                    clickhouse_data["repo"], 
+                                                    api_columns)
+        
+        repo_data = clickhouse_data.join(github_api_data.set_index("repo"), 
+                                         on="repo")
+    
+        repo_data = self.__format_data_types(repo_data)
+        return repo_data
+    
+    def __get_github_api_columns(self, transaction_composition: dict):
+        source_condition = self.data_configuration["source"] == "githubApi"
+        api_columns = list(self.data_configuration[source_condition]["columnName"])
+        api_columns = [column for column in api_columns if column in transaction_composition.keys()]
+        api_columns.append("repo")
+        return api_columns
+    
+    def __filter_clickhouse_data_columns(self, 
+                              clickhouse_data: pd.DataFrame, 
+                              transaction_composition: dict) -> pd.DataFrame:
+        filtered_data = clickhouse_data.copy()
+        
+        for column in filtered_data.columns:
+            if not (column in transaction_composition.keys() or 
+                    column == 'repo'):
+                filtered_data.drop(columns=column, inplace=True)
+            
+        return filtered_data
+
+    def __get_query_by_params(self, 
+                              start_date: str,
+                              end_date: str,  
+                              limit: int,
+                              min_watch_event_count: int,
+                              min_new_members_count: int,
+                              is_new_repos: bool):
+        
+        new_repos_filter = NEW_REPOS_QUERY_FILTER if is_new_repos else ''
+        
+        min_watches_filter = (MIN_WATCHES_QUERY_FILTER.format(
+            start_date=start_date, 
+            end_date=end_date,
+            watch_event_count=min_watch_event_count
+        ) if min_watch_event_count > 0 else '')
+            
+        min_members_filter = (MIN_MEMBERS_QUERY_FILTER.format(
+            start_date=start_date, 
+            end_date=end_date,
+            new_members_count=min_new_members_count
+        ) if min_new_members_count > 0 else '')
+            
+        # making sql query
         query = CLICKHOUSE_DATA_QUERY.format( 
                 start_date=start_date, 
                 end_date=end_date,
                 limit=limit,
-                watch_event_count=repo_watch_event_count)
+                new_repos_filter=new_repos_filter,
+                min_watches_filter=min_watches_filter,
+                min_members_filter=min_members_filter
+        )
+        return query
+    
+    def __format_data_types(self, data):
+        formatted_copy = data.copy()
+        data_conf = self.data_configuration
         
-        clickhouse_data = self.__get_clickhouse_data(query, REQUEST_DELAY)
+        for col in formatted_copy.columns:
+            if not col in list(data_conf["columnName"]):
+                continue
+            
+            col_type = data_conf[data_conf['columnName'] == col]['dtype'].values[0]
+            if col_type in self.TYPES_DICT:
+                formatted_copy[col] = formatted_copy[col].astype(self.TYPES_DICT[col_type])
         
-        # TODO исправить в json
-        clickhouse_data['pushes'] = clickhouse_data['pushes'].astype(int)
-        clickhouse_data['pull_requests'] = clickhouse_data['pull_requests'].astype(int)
-        clickhouse_data['issues'] = clickhouse_data['issues'].astype(int)
-        clickhouse_data['watches'] = clickhouse_data['watches'].astype(int)
-        clickhouse_data['forks'] = clickhouse_data['forks'].astype(int)
-        clickhouse_data['avg_push_size'] = clickhouse_data['avg_push_size'].astype(float)
-        clickhouse_data['merged_pull_requests_ratio'] = clickhouse_data['merged_pull_requests_ratio'].astype(float)
-        clickhouse_data['closed_issues_ratio'] = clickhouse_data['closed_issues_ratio'].astype(float)
-        
-        github_api_columns = ['language', 'license_name', 'is_deleted_or_private']
-        github_api_data = await self._get_github_api_data(clickhouse_data["repo"], github_api_columns)
-        
-        repo_data = clickhouse_data.join(github_api_data.set_index("repo"), on="repo")
-        return repo_data
+            formatted_copy[col] = formatted_copy[col].astype(col_type)
+            
+            if col_type != "float":
+                continue
+
+            col_decimal_places = data_conf[data_conf["columnName"] == col]["decimalPlaces"].values[0]
+            formatted_copy[col] = formatted_copy[col].round(int(col_decimal_places))
+            
+        return formatted_copy
     
     async def _fetch(self, session, url):
         async with session.get(url, headers=self.headers) as response:
             return await response.json(), response.status
     
-    async def _get_github_api_data(self, repo_names, data_columns):
+    async def __get_github_api_data(self, repo_names, data_columns):
         tasks = []
         
         data = {'repo': []}
@@ -114,29 +195,34 @@ class ServiceConnector():
         return df
 
     def __get_clickhouse_data(self, query, delay=30, quantiles=False):
-        # Создаем новую вкладку для каждого запроса
         driver = webdriver.Chrome()
         driver.get(self.CLICKHOUSE_REQUEST_URL)
+        
         query_input = driver.find_element(By.ID, 'query')
         query_input.send_keys(query)
         query_input.send_keys(Keys.CONTROL, Keys.RETURN)
+        
         time.sleep(delay)
+        
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, 'html.parser')
         table = soup.find('table', {'id': 'data-table'})
         driver.quit()
         
+        # TODO Сделать ошибку
         if not table:
             return
         
         headers = ["quantiles"]
 
+        # TODO Убрать условия
         if not quantiles:
             header_elements = table.find_all('th')[1:]
             headers = [header.text for header in header_elements]
         
         table_data = []
         rows = table.find_all('tr')
+        
         if not quantiles:
             rows = rows[1:]
         for row in rows:
@@ -145,16 +231,18 @@ class ServiceConnector():
                 columns = columns[1:]
             data = [col.text.strip() for col in columns]
             table_data.append(data)
-        
-        # Создаем DataFrame
+    
         df = pd.DataFrame(table_data, columns=headers)
         
         return df
-        
-        
-    def __validate_date(self, date_string):
+          
+    def __validate_date_range(self, start_date_string: str, end_date_string: str) -> bool:
         try:
-            datetime.strptime(date_string, '%Y-%m-%d')
+            start_date = datetime.strptime(start_date_string, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date_string, '%Y-%m-%d')
+            
+            if start_date > end_date:
+                return False
             return True
         except ValueError:
             return False

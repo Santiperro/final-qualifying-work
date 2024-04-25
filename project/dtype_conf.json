@@ -1,0 +1,83 @@
+[
+    {
+        "columnName": "pushes",
+        "decode": "Pushes",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0
+    },
+    {
+        "columnName": "avg_push_size",
+        "decode": "Ср. размер push",
+        "source": "clickhousePlayground",
+        "dtype": "float",
+        "decimalPlaces": 2
+    },
+    {
+        "columnName": "pull_requests",
+        "decode": "Pull requests",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0
+    },
+    {
+        "columnName": "merged_pull_requests_ratio",
+        "decode": "Слитых PR ко всем",
+        "source": "clickhousePlayground",
+        "dtype": "float",
+        "decimalPlaces": 2
+    },
+    {
+        "columnName": "issues",
+        "decode": "Issues",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0
+    },
+    {
+        "columnName": "closed_issues_ratio",
+        "decode": "Закр. issue ко всем",
+        "source": "clickhousePlayground",
+        "dtype": "float",
+        "decimalPlaces": 2
+    },
+    {
+        "columnName": "watches",
+        "decode": "Watches",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0
+    },
+    {
+        "columnName": "forks",
+        "decode": "Forks",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0
+    },
+    {
+        "columnName": "new_members",
+        "decode": "Новых уч-ов",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0
+    },
+    {
+        "columnName": "language",
+        "decode": "Язык",
+        "source": "githubApi",
+        "dtype": "str"
+    },
+    {
+        "columnName": "license_name",
+        "decode": "Лиц-ия",
+        "source": "githubApi",
+        "dtype": "str"
+    },
+    {
+        "columnName": "is_deleted_or_private",
+        "decode": "Удален/Закрыт",
+        "source": "githubApi",
+        "dtype": "bool"
+    }
+]

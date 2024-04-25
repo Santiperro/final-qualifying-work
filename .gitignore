@@ -155,4 +155,4 @@ docs-example
 data
 auth
 basket
-*.env
+# *.env

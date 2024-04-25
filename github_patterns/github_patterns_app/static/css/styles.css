@@ -1,0 +1,106 @@
+/* CSS */
+
+dl, ol, ul, div, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+
+header {
+    background-color: lightgray;
+}
+
+nav {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 0 500px;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+    align-items: center;
+}
+
+nav ul li {
+    margin-right: 25px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+}
+
+nav a:hover {
+    border-bottom: 2px solid black;
+}
+
+button {
+    background: none;
+    color: black;
+    border: none;
+}
+
+/* Request data page */
+
+.requestpagecontent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: black;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    position: relative;
+}
+.notification {
+    width: 400px;
+    padding: 10px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+}
+.input-group input[type="date"].error {
+    border: 2px solid rgb(224, 0, 0); /* Увеличиваем толщину границы */
+    outline: none; /* Убираем стандартное выделение браузера */
+}
+.input-group input[type="number"] {
+    width: 50px;
+}
+.input-group input[type="number"].error {
+    border: 2px solid red; /* Увеличиваем толщину границы */
+    outline: none; /* Убираем стандартное выделение браузера */
+}
+.input-group input[type="number"]::-webkit-inner-spin-button,
+.input-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-group input[type="radio"] {
+    width: auto;
+}
+.input-group input[type="text"] {
+    width: 200px;
+}
+.radio-group {
+    margin-top: -10px; /* Измените это значение, чтобы управлять расстоянием между элементами */
+} 

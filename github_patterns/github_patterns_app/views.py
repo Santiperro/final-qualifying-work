@@ -1,7 +1,17 @@
 from django.shortcuts import render
 from django.db import transaction
-from models import GithubData, GithubDataParams
+from github_patterns_app.models import GithubData, GithubDataParams
 import pandas as pd
+
+
+def find_patterns(request):
+
+    return render(request, 'find_patterns.html')
+
+
+def request_data(request):
+    
+    return render(request, 'request_data.html')
 
 
 def save_dataframe_to_model(df: pd.DataFrame, data_params: dict):
