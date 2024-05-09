@@ -7,5 +7,6 @@ from . import views
 urlpatterns = [
     path('', views.find_patterns, name='find_patterns'), 
     path('request-data', views.request_data, name='request_data'),
+    path('load-data-submit', views.load_data_submit, name='load_data_submit'),  # Добавьте эту строку
     # path('accounts/', include("django.contrib.auth.urls")),   # working for login.html
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

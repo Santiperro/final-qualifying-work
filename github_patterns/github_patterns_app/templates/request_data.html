@@ -3,36 +3,39 @@
 {% block content %}
 <div class="requestpagecontent">
     <div class="container">
-        <h1>Выберите параметры даных</h1>
+        <h4>Выберите параметры данных:</h4>
         <div class="input-group">
-            <label>Начальная дата</label>
-            <input type="date" id="startDate" name="trip-start" min="2015-01-01" onchange="checkDates('startDate')" />
+            <label>Начальная дата:</label>
+            <input type="date" id="startDate" name="trip-start" min="2015-01-01" onchange="validateDates('startDate')" />
         </div>
         <div class="input-group">
-            <label>Конечная дата</label>
-            <input type="date" id="endDate" name="trip-end" min="2015-01-01" onchange="checkDates('endDate')" />
+            <label>Конечная дата:</label>
+            <input type="date" id="endDate" name="trip-end" min="2015-01-01" onchange="validateDates('endDate')" />
         </div>
         <div class="input-group">
-            <label>Мин. число участников</label>
-            <input type="number" id="minParticipants" min="1" max="9999" value="1" onchange="validateInput('minParticipants')" />
+            <label for="minStars">Мин. число звезд репозитория:</label>
+            <input type="number" id="minStars" min="0" max="99999" value="100" onchange="validateNumbers('minStars')" />
         </div>
         <div class="input-group">
-            <label>Мин. число звезд</label>
-            <input type="number" id="minStars" min="0" max="99999" value="100" onchange="validateInput('minStars')" />
+            <label for="minParticipants">Мин. число участников репозитория:</label>
+            <input type="number" id="minParticipants" min="1" max="9999" value="1" onchange="validateNumbers('minParticipants')" />
         </div>
         <div class="input-group">
-            <label>Число репозиториев</label>
-            <input type="number" id="numRepos" min="500" max="5000" value="1000" onchange="validateInput('numRepos')" />
+            <label for="numRepos">Число репозиториев:</label>
+            <input type="number" id="numRepos" min="500" max="5000" value="1000" onchange="validateNumbers('numRepos')" />
         </div>
         <div class="input-group">
-            <label>Новые репозитории</label>
+            <label>Новые репозитории:</label>
             <input type="radio" name="choice" />
         </div>
         <div class="input-group radio-group">
-            <label>Все репозитории</label>
-            <input type="radio" name="choice" />
+            <label>Все репозитории:</label>
+            <input type="radio" name="choice" checked />
         </div>
-        <table>
+        <div class="input-group">
+            <label>Выбор состава транзакции:</label>
+        </div>
+        <table id="LoadDataParamsTable">
             <thead>
                 <tr>
                     <th>Имя элемента</th>
@@ -41,16 +44,26 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Здесь будут элементы, которые будет грузить django -->
+                {% for item, dtype in items.items %}
+                <tr>
+                    <td>{{ item }}</td>
+                    <td class="clickable" onclick="toggleDivisionType(this, '{{ item }}')">{% if dtype == 'int' or dtype == 'float' %}Децили{% else %}-{% endif %}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
         <div class="input-group">
-            <label>Поле для заметки</label>
+            <label>Поле для заметки:</label>
             <input type="text" />
         </div>
+        <button id="getGithubDataButton" onclick="load_data_submit()">Загрузить данные</button>
         <div id="notification" class="notification"></div>
-        <button>Загрузить данные</button>
-    </div>  
+    </div>
 </div>
-<button>Кнопка</button>
 {% endblock %}

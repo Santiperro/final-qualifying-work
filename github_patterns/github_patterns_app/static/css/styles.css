@@ -16,11 +16,16 @@ header {
 }
 
 nav {
+    position: fixed; /* Закрепляет навигацию сверху */
+    top: 0; /* Устанавливает навигацию в верхней части страницы */
+    width: 100%; /* Устанавливает ширину навигации на 100% ширины экрана */
     height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center; 
     padding: 0 500px;
+    background-color: lightgray; /* Добавляет фон, чтобы навигация была видна поверх другого контента */
+    z-index: 1; /* Устанавливает навигацию поверх другого контента */
 }
 
 nav ul {
@@ -42,20 +47,14 @@ nav a:hover {
     border-bottom: 2px solid black;
 }
 
-button {
-    background: none;
-    color: black;
-    border: none;
-}
-
 /* Request data page */
 
 .requestpagecontent {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     color: black;
+    padding-top: 150px; /* Отступ сверху */
 }
 .container {
     display: flex;
@@ -104,3 +103,180 @@ button {
 .radio-group {
     margin-top: -10px; /* Измените это значение, чтобы управлять расстоянием между элементами */
 } 
+
+/* Table */
+
+#LoadDataParamsTable {
+    display: block;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar {
+    width: 10px;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#LoadDataParamsTable th, #LoadDataParamsTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#LoadDataParamsTable th {
+    text-align: center;
+    min-width: 127px;
+}
+
+#LoadDataParamsTable td:nth-child(3) {
+    text-align: center;
+}
+
+.clickable {
+    cursor: pointer;
+    color: black;
+    text-decoration: underline;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px; /* Уменьшенный размер */
+    height: 22px; /* Уменьшенный размер */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Уменьшенный размер */
+    width: 18px; /* Уменьшенный размер */
+    left: 2px; /* Уменьшенный размер */
+    bottom: 2px; /* Уменьшенный размер */
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px); /* Уменьшенный размер */
+}
+
+input:checked + .slider {
+    background-color: rgb(140, 140, 140);
+}
+
+.slider.round {
+    border-radius: 20px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#getGithubDataButton {
+    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
+    font-size: 16px; /* Размер шрифта */
+    border: 2px solid #333; /* Граница вокруг кнопки */
+    background-color: #f8f8f8; /* Цвет фона кнопки */
+    color: #333; /* Цвет текста кнопки */
+    cursor: pointer; /* Изменение курсора при наведении */
+    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+}
+
+#getGithubDataButton:hover {
+    background-color: #ddd; /* Цвет фона кнопки при наведении */
+}
+
+
+/* find_patterns page */
+
+.findpagecontent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    padding-top: 150px; /* Отступ сверху */
+}
+
+/* Samples Table */
+
+#SamplesTable {
+    display: block;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+#SamplesTable::-webkit-scrollbar {
+    width: 10px;
+}
+
+#SamplesTable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#SamplesTable::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#SamplesTable::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#SamplesTable th, #SamplesTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+#SamplesTable th {
+    min-width: 127px;
+}
+
+#SamplesTable td:first-child {
+    text-align: left;
+}
+
+#findPatternsButton {
+    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
+    font-size: 16px; /* Размер шрифта */
+    border: 2px solid #333; /* Граница вокруг кнопки */
+    background-color: #f8f8f8; /* Цвет фона кнопки */
+    color: #333; /* Цвет текста кнопки */
+    cursor: pointer; /* Изменение курсора при наведении */
+    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+}
+
+#findPatternsButton:hover {
+    background-color: #ddd; /* Цвет фона кнопки при наведении */
+}

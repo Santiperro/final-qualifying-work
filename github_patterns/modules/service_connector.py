@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from datetime import datetime
 import time
 import aiohttp
@@ -7,9 +8,8 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from exceptions.invalid_date_format_exception import InvalidDateFormatException
-from queries import *
-import json
+from .queries import *
+from .exceptions import *
 
 
 class ServiceConnector():
@@ -30,10 +30,10 @@ class ServiceConnector():
         # self.token = getpass.getpass('Введите ваш GitHub токен: ')
         self.github_api_token = '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'
         self.headers = {'Authorization': f'token {self.github_api_token}'}
-        self.data_configuration = pd.read_json("dtype_conf.json")
+        self.data_configuration = pd.read_json(r"dtype_conf.json")
             
     async def get_data_from_services(self, 
-                       transaction_composition: dict[str, str],
+                       transaction_composition: list[str],
                        start_date: str,
                        end_date: str | None = None,  
                        limit: int = DEFAULT_LIMIT,
@@ -87,22 +87,21 @@ class ServiceConnector():
         repo_data = self.__format_data_types(repo_data)
         return repo_data
     
-    def __get_github_api_columns(self, transaction_composition: dict):
+    def __get_github_api_columns(self, transaction_composition: list):
         source_condition = self.data_configuration["source"] == "githubApi"
         api_columns = list(self.data_configuration[source_condition]["columnName"])
-        api_columns = [column for column in api_columns if column in transaction_composition.keys()]
+        api_columns = [column for column in api_columns if column in transaction_composition]
         api_columns.append("repo")
         return api_columns
     
     def __filter_clickhouse_data_columns(self, 
                               clickhouse_data: pd.DataFrame, 
-                              transaction_composition: dict) -> pd.DataFrame:
+                              transaction_composition: list) -> pd.DataFrame:
         filtered_data = clickhouse_data.copy()
         
         for column in filtered_data.columns:
-            if not (column in transaction_composition.keys() or 
-                    column == 'repo'):
-                filtered_data.drop(columns=column, inplace=True)
+            if not (column in transaction_composition or column == 'repo'):
+                filtered_data[column].fillna(value=np.nan, inplace=True)
             
         return filtered_data
 

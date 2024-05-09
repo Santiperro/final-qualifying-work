@@ -1,6 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Страница 1</h1>
-    <p>Это контент страницы 2.</p>
+<div class="findpagecontent">
+    <div class="container">
+        <h4>Выберите данные для поиска шаблонов</h4>
+        <table id="SamplesTable">
+            <thead>
+                <tr>
+                    <th>Заметка</th>
+                    <th>Время создания</th>
+                    <th>Кол-во</th>
+                    <th>Мин. участников</th>
+                    <th>Мин звезд</th>
+                    <th>Период</th>
+                    <th>Использовать выборку</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sample in samples %}
+                <tr id="{{ sample.id }}">
+                    <td>{{ sample.note }}</td>
+                    <td>{{ sample.save_time }}</td>
+                    <td>{{ sample.repos_count }}</td>
+                    <td>{{ sample.min_members_count }}</td>
+                    <td>{{ sample.min_watch_count }}</td>
+                    <td>{{ sample.time_interval }}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" onclick="toggleSelection(this, '{{ sample.id }}')">
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h4>Выберите параметры поиска шаблонов</h4>
+        <div class="input-group">
+            <label for="antecedent">Количество элементов антецедента:</label>
+            <input type="number" id="antecedent" min="1" max="10" value="1" onchange="validateNumbers('antecedent')" />
+        </div>
+        <div class="input-group">
+            <label for="consequent">Количество элементов консеквента:</label>
+            <input type="number" id="consequent" min="1" max="10" value="1" onchange="validateNumbers('consequent')" />
+        </div>
+        <div class="input-group">
+            <label for="minsup">Миниамльная поддержка:</label>
+            <input type="number" id="minsup" min="0.001" max="1" value="0.1" onchange="validateNumbers('minsup')" />
+        </div>
+        <div class="input-group">
+            <label for="minconf">Миниамльная достоверность:</label>
+            <input type="number" id="minconf" min="0.001" max="1" value="0.1" onchange="validateNumbers('minconf')" />
+        </div>
+        <div class="input-group">
+            <label for="lift">Минимальный подъем:</label>
+            <input type="number" id="lift" min="-100" max="1" value="100" onchange="validateNumbers('lift')" />
+        </div>
+        <div id="notification" class="notification"></div>
+        <button id="findPatternsButton" onclick="">Найти шаблоны</button>
+    </div>
+</div>
 {% endblock %}

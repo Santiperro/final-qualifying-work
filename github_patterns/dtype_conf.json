@@ -1,82 +1,94 @@
 [
     {
         "columnName": "pushes",
-        "decode": "Pushes",
+        "shortDecode": "Pushes",
+        "decode": "Отправленные изменения (Pushes)",
         "source": "clickhousePlayground",
         "dtype": "int",
         "decimalPlaces": 0
     },
     {
         "columnName": "avg_push_size",
-        "decode": "Ср. размер push",
+        "shortDecode": "Ср. размер push",
+        "decode": "Средний размер изменений",
         "source": "clickhousePlayground",
         "dtype": "float",
         "decimalPlaces": 2
     },
     {
         "columnName": "pull_requests",
-        "decode": "Pull requests",
+        "shortDecode": "Pull requests",
+        "decode": "Запросы на изменения (Pull requests)",
         "source": "clickhousePlayground",
         "dtype": "int",
         "decimalPlaces": 0
     },
     {
         "columnName": "merged_pull_requests_ratio",
-        "decode": "Слитых PR ко всем",
+        "shortDecode": "Слитых PR ко всем",
+        "decode": "Соотношение слитых запросов на изменения ко всем",
         "source": "clickhousePlayground",
         "dtype": "float",
         "decimalPlaces": 2
     },
     {
         "columnName": "issues",
-        "decode": "Issues",
+        "shortDecode": "Issues",
+        "decode": "Вопросов к репозиторию (Issues)",
         "source": "clickhousePlayground",
         "dtype": "int",
         "decimalPlaces": 0
     },
     {
         "columnName": "closed_issues_ratio",
-        "decode": "Закр. issue ко всем",
+        "shortDecode": "Закр. issue ко всем",
+        "decode": "Соотношение закрытых issue ко всем",
         "source": "clickhousePlayground",
         "dtype": "float",
         "decimalPlaces": 2
     },
     {
         "columnName": "watches",
-        "decode": "Watches",
+        "shortDecode": "Stars",
+        "decode": "Звезд репозитория",
         "source": "clickhousePlayground",
         "dtype": "int",
         "decimalPlaces": 0
     },
     {
         "columnName": "forks",
-        "decode": "Forks",
+        "shortDecode": "Forks",
+        "decode": "Ветвления репозитория (Forks)",
         "source": "clickhousePlayground",
         "dtype": "int",
         "decimalPlaces": 0
     },
     {
         "columnName": "new_members",
-        "decode": "Новых уч-ов",
+        "shortDecode": "Новых уч-ов",
+        "decode": "Новых участников",
         "source": "clickhousePlayground",
         "dtype": "int",
         "decimalPlaces": 0
     },
     {
         "columnName": "language",
-        "decode": "Язык",
+        "shortDecode": "Язык",
+        "decode": "Язык программирования репозитория",
         "source": "githubApi",
         "dtype": "str"
     },
     {
         "columnName": "license_name",
-        "decode": "Лиц-ия",
+        "shortDecode": "Лиц-ия",
+        "decode": "Лицензия репозитория",
         "source": "githubApi",
         "dtype": "str"
     },
     {
         "columnName": "is_deleted_or_private",
-        "decode": "Удален/Закрыт",
+        "shortDecode": "Удален/Закрыт",
+        "decode": "Репозиторий удален или закрыт",
         "source": "githubApi",
         "dtype": "bool"
     }
