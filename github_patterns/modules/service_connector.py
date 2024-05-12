@@ -1,11 +1,15 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from dateutil import relativedelta
 import time
 import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from .queries import *
@@ -15,11 +19,11 @@ from .exceptions import *
 class ServiceConnector():
     CLICKHOUSE_REQUEST_URL = 'https://play.clickhouse.com/play?user=play'
     GITHUB_API_REQUEST_URL = 'https://api.github.com/repos/{repo_name}'
-    REQUEST_DELAY = 45
+    REQUEST_DELAY = 10
     
     DEFAULT_LIMIT = 1000
     DEFAULT_WATCH_EVENT_COUNT = 10
-    DEFAULT_NEW_MEMBERS_COUNT = 3
+    DEFAULT_MIN_MEMBERS_COUNT = 3
     
     TYPES_DICT = {"int": int, 
                   "float": float, 
@@ -38,32 +42,27 @@ class ServiceConnector():
                        end_date: str | None = None,  
                        limit: int = DEFAULT_LIMIT,
                        min_watch_event_count: int = DEFAULT_WATCH_EVENT_COUNT,
-                       min_new_members_count: int = DEFAULT_NEW_MEMBERS_COUNT,
+                       min_members_count: int = DEFAULT_MIN_MEMBERS_COUNT,
                        is_new_repos: bool = False) -> pd.DataFrame:
         """
         transaction_composition example:
-        {'pushes': 'dec',
-        'avg_push_size': 'dec',
-        'pull_requests': 'qua',
-        'merged_pull_requests_ratio': 'dec',
-        'issues': 'dec',
-        'closed_issues_ratio': 'qua',
-        'watches': 'dec',
-        'forks': 'dec',
-        'new_members': 'dec',
-        'language': 'None',
-        'license_name': 'None',
-        'is_deleted_or_private': 'None'}
+        ['pushes',
+        'avg_push_size',
+        'pull_requests',
+        'merged_pull_requests_ratio',
+        'issues',
+        'closed_issues_ratio',
+        'watches',
+        'forks',
+        'new_members',
+        'language',
+        'license_name',
+        'is_deleted_or_private']
         """
         
-        # params validation
-        if not start_date:
-            raise ValueError("start_date не может быть пустым")
-        
-        if not end_date:
-            end_date = start_date
-        
         self.__validate_date_range(start_date, end_date)
+        
+        min_new_members_count = min_members_count - 1
         
         query = self.__get_query_by_params(start_date,
                                            end_date, 
@@ -72,7 +71,25 @@ class ServiceConnector():
                                            min_new_members_count,
                                            is_new_repos)
         
-        clickhouse_data = self.__get_clickhouse_data(query, self.REQUEST_DELAY)
+        delay = self.REQUEST_DELAY
+        if min_watch_event_count > 0:
+            delay += 10
+        if min_members_count > 1:
+            delay += 10
+        if is_new_repos:
+            delay += 10
+            
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        
+        difference = relativedelta.relativedelta(end_date, start_date)
+        months_difference = difference.years * 12 + difference.months
+        delay += 2 * months_difference
+        
+        print(delay)
+
+        
+        clickhouse_data = self.__get_clickhouse_data(query, delay)
         clickhouse_data = self.__filter_clickhouse_data_columns(clickhouse_data, 
                                                         transaction_composition)
         
@@ -193,45 +210,50 @@ class ServiceConnector():
         df = pd.DataFrame(data)
         return df
 
-    def __get_clickhouse_data(self, query, delay=30, quantiles=False):
+    def __get_clickhouse_data(self, query, delay=30):
         driver = webdriver.Chrome()
         driver.get(self.CLICKHOUSE_REQUEST_URL)
-        
+
         query_input = driver.find_element(By.ID, 'query')
         query_input.send_keys(query)
         query_input.send_keys(Keys.CONTROL, Keys.RETURN)
         
         time.sleep(delay)
-        
+        try:
+            WebDriverWait(driver, 0).until(EC.presence_of_element_located((By.ID, 'data-table')))
+        except TimeoutException:
+            driver.quit()
+            raise EmptyTableError("Слишком сложный запрос, данные не получены. Попробуйте изменить параметры запроса")
+
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, 'html.parser')
         table = soup.find('table', {'id': 'data-table'})
         driver.quit()
         
-        # TODO Сделать ошибку
         if not table:
-            return
-        
-        headers = ["quantiles"]
-
-        # TODO Убрать условия
-        if not quantiles:
-            header_elements = table.find_all('th')[1:]
-            headers = [header.text for header in header_elements]
+            raise EmptyTableError("Данные не получены. "
+                + "Попробуйте изменить параметры запроса")
+   
+        header_elements = table.find_all('th')[1:]
+        headers = [header.text for header in header_elements]
         
         table_data = []
         rows = table.find_all('tr')
         
-        if not quantiles:
-            rows = rows[1:]
-        for row in rows:
-            columns = row.find_all('td')
-            if not quantiles:
-                columns = columns[1:]
+        for row in rows[1:]:
+            columns = row.find_all('td')[1:]
             data = [col.text.strip() for col in columns]
             table_data.append(data)
+            
+        if not table_data:
+            raise EmptyTableError("Данные не получены. "
+                + "Попробуйте изменить параметры запроса")
     
         df = pd.DataFrame(table_data, columns=headers)
+        
+        if df.shape[0] < 200:
+            raise InsufficientRowsError("В таблице меньше 200 записей" 
+                                        + "Попробуйте изменить параметры запроса")
         
         return df
           

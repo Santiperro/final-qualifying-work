@@ -14,6 +14,7 @@
                     <th>Мин звезд</th>
                     <th>Период</th>
                     <th>Использовать выборку</th>
+                    <th>Удалить</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,12 +25,15 @@
                     <td>{{ sample.repos_count }}</td>
                     <td>{{ sample.min_members_count }}</td>
                     <td>{{ sample.min_watch_count }}</td>
-                    <td>{{ sample.time_interval }}</td>
+                    <td>{{ sample.end_date|date:"Y-m-d" }} - {{ sample.start_date|date:"Y-m-d" }}</td>
                     <td>
                         <label class="switch">
                             <input type="checkbox" onclick="toggleSelection(this, '{{ sample.id }}')">
                             <span class="slider round"></span>
                         </label>
+                    </td>
+                    <td>
+                        <button class="delete-button" data-id="{{ sample.id }}">❌</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -37,27 +41,53 @@
         </table>
         <h4>Выберите параметры поиска шаблонов</h4>
         <div class="input-group">
-            <label for="antecedent">Количество элементов антецедента:</label>
+            <label for="antecedent">Минимально элементов антецедента:</label>
             <input type="number" id="antecedent" min="1" max="10" value="1" onchange="validateNumbers('antecedent')" />
         </div>
         <div class="input-group">
-            <label for="consequent">Количество элементов консеквента:</label>
+            <label for="consequent">Минимально элементов консеквента:</label>
             <input type="number" id="consequent" min="1" max="10" value="1" onchange="validateNumbers('consequent')" />
         </div>
         <div class="input-group">
-            <label for="minsup">Миниамльная поддержка:</label>
+            <label for="minsup">Минимальная поддержка:</label>
             <input type="number" id="minsup" min="0.001" max="1" value="0.1" onchange="validateNumbers('minsup')" />
         </div>
         <div class="input-group">
-            <label for="minconf">Миниамльная достоверность:</label>
+            <label for="minconf">Минимальная достоверность:</label>
             <input type="number" id="minconf" min="0.001" max="1" value="0.1" onchange="validateNumbers('minconf')" />
         </div>
         <div class="input-group">
             <label for="lift">Минимальный подъем:</label>
-            <input type="number" id="lift" min="-100" max="1" value="100" onchange="validateNumbers('lift')" />
+            <input type="number" id="lift" min="-100" max="100" value="1" onchange="validateNumbers('lift')" />
         </div>
-        <div id="notification" class="notification"></div>
-        <button id="findPatternsButton" onclick="">Найти шаблоны</button>
+        <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
+        <div id="errorDiv" class="errorDiv"></div>
+        <div id="TableContainer">
+            <table id="PatternsTable">
+                <thead>
+                    <tr>
+                        <th>Антецедент</th>
+                        <th>Консеквент</th>
+                        <th>Поддержка</th>
+                        <th>Достоверность</th>
+                        <th>Подъем</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pattern in patterns %}
+                    <tr>
+                        <td>{{ pattern.antecedents }}</td>
+                        <td>{{ pattern.consequents }}</td>
+                        <td>{{ pattern.support }}</td>
+                        <td>{{ pattern.confidence }}</td>
+                        <td>{{ pattern.lift }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button id="download" style="display: none;">Скачать данные</button>
+        <div id="spacer" style="height: 50px;"></div>
     </div>
 </div>
 {% endblock %}

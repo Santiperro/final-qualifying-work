@@ -20,6 +20,9 @@ class AttributeInfo(models.Model):
         choices=DIVISION
     )
     
+    def __str__(self):
+        return f"Status: {self.get_status_display()}, Division: {self.get_division_display()}"
+    
 class SampleParams(models.Model):
     save_time = models.DateTimeField()
     start_date = models.DateField()
@@ -31,33 +34,42 @@ class SampleParams(models.Model):
     note = models.CharField(max_length=200, null=True)
     
     # Sample attributes params:
-    pushes_duration_info = models.ForeignKey(AttributeInfo, 
+    pushes_duration_info = models.OneToOneField(AttributeInfo, 
                                              on_delete=models.CASCADE, 
                                              related_name='pushes_info')
-    avg_push_size_info = models.ForeignKey(AttributeInfo, 
+    avg_push_size_info = models.OneToOneField(AttributeInfo, 
                                            on_delete=models.CASCADE, 
                                            related_name='avg_push_size_info')
-    pull_requests_info = models.ForeignKey(AttributeInfo, 
+    pull_requests_info = models.OneToOneField(AttributeInfo, 
                                            on_delete=models.CASCADE, 
                                            related_name='pull_requests_info')
-    merged_pull_requests_ratio_info = models.ForeignKey(AttributeInfo, 
+    merged_pull_requests_ratio_info = models.OneToOneField(AttributeInfo, 
                                                         on_delete=models.CASCADE, 
                                                         related_name='merged_pull_requests_ratio_info')
-    issues_info = models.ForeignKey(AttributeInfo, 
+    issues_info = models.OneToOneField(AttributeInfo, 
                                     on_delete=models.CASCADE, 
                                     related_name='issues_info')
-    closed_issues_ratio_info = models.ForeignKey(AttributeInfo, 
+    closed_issues_ratio_info = models.OneToOneField(AttributeInfo, 
                                                  on_delete=models.CASCADE, 
                                                  related_name='closed_issues_ratio_info')
-    watches_info = models.ForeignKey(AttributeInfo, 
+    watches_info = models.OneToOneField(AttributeInfo, 
                                      on_delete=models.CASCADE, 
                                      related_name='watches_info')
-    forks_info = models.ForeignKey(AttributeInfo, 
+    forks_info = models.OneToOneField(AttributeInfo, 
                                    on_delete=models.CASCADE, 
                                    related_name='forks_info')
-    new_members_info = models.ForeignKey(AttributeInfo, 
+    new_members_info = models.OneToOneField(AttributeInfo, 
                                          on_delete=models.CASCADE, 
                                          related_name='new_members_info')
+    language_info = models.OneToOneField(AttributeInfo, 
+                                         on_delete=models.CASCADE, 
+                                         related_name='language_info')
+    license_name_info = models.OneToOneField(AttributeInfo, 
+                                         on_delete=models.CASCADE, 
+                                         related_name='license_name_info')
+    is_deleted_or_private_info = models.OneToOneField(AttributeInfo, 
+                                         on_delete=models.CASCADE, 
+                                         related_name='is_deleted_or_private_info')
 
 class RepositoryData(models.Model):
     data_params_id = models.ForeignKey(SampleParams, 

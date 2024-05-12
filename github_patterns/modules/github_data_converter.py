@@ -7,7 +7,7 @@ class GithubDataConverter():
             'dec': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]}
     
     def __init__(self):
-        self.data_configuration = pd.read_json(r"../../dtype_conf.json")
+        self.data_configuration = pd.read_json(r"dtype_conf.json")
 
     def convert_data_to_transactions(self, 
                                      repos_data:pd.DataFrame, 
@@ -102,7 +102,10 @@ class GithubDataConverter():
         :rtype: pandas.DataFrame
         """
         clean_data = repo_data.drop_duplicates()
-        clean_data.drop('repo', axis=1, inplace=True)
+        for column in clean_data.columns:
+            if not column in self.data_configuration["columnName"].values:
+                clean_data.drop(column, axis=1, inplace=True)
+       
         return clean_data
     
     def __delete__column_names(self, transaction_data):

@@ -22,7 +22,7 @@
         </div>
         <div class="input-group">
             <label for="numRepos">Число репозиториев:</label>
-            <input type="number" id="numRepos" min="500" max="5000" value="1000" onchange="validateNumbers('numRepos')" />
+            <input type="number" id="numRepos" min="200" max="5000" value="1000" onchange="validateNumbers('numRepos')" />
         </div>
         <div class="input-group">
             <label>Новые репозитории:</label>
@@ -63,6 +63,7 @@
             <input type="text" />
         </div>
         <button id="getGithubDataButton" onclick="load_data_submit()">Загрузить данные</button>
+        <div id="errorDiv" class="errorDiv"></div>
         <div id="notification" class="notification"></div>
     </div>
 </div>
