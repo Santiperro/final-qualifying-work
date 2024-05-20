@@ -277,6 +277,16 @@ input:checked + .slider {
     text-align: left;
 }
 
+.new-sample-button {
+    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
+    font-size: 16px; /* Размер шрифта */
+    border: 2px solid #333; /* Граница вокруг кнопки */
+    background-color: #f8f8f8; /* Цвет фона кнопки */
+    color: #333; /* Цвет текста кнопки */
+    cursor: pointer; /* Изменение курсора при наведении */
+    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+}
+
 #findPatternsButton {
     padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
     font-size: 16px; /* Размер шрифта */
@@ -291,18 +301,39 @@ input:checked + .slider {
     background-color: #ddd; /* Цвет фона кнопки при наведении */
 }
 
+/* Стили для кнопки удаления */
 .delete-button {
     background: none;
     border: none;
-    color: black !important;
-    font-size: 1.2em;
     cursor: pointer;
+    font-size: 16px;
+    color: black; /* Устанавливаем черный цвет для креста */
+}
+
+.delete-button:hover {
+    color: red; /* Цвет креста при наведении */
+}
+
+#TableContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    margin-bottom: 10px;
 }
 
 #PatternsTable {
-    display: none;
     max-height: 500px;
     overflow-y: auto;
+    display: table;
+    width: 100%; /* Устанавливаем ширину таблицы */
+    border-collapse: collapse;
+}
+
+#PatternsTable th, #PatternsTable td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    position: relative; /* Делаем ячейки таблицы относительно позиционированными */
+    top: -1px; /* Добавляем отрицательный отступ сверху */
 }
 
 #PatternsTable::-webkit-scrollbar {
@@ -329,7 +360,6 @@ input:checked + .slider {
 }
 
 #PatternsTable th {
-    text-align: center; /* Выравниваем текст по центру */
     position: sticky;
     top: 0;
     background: white;
@@ -337,6 +367,60 @@ input:checked + .slider {
     z-index: 2;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
+}
+
+#PatternsTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    position: relative;
+    top: -1px;
+}
+
+#QuantilesTableContainer {
+    max-height: 400px;
+    overflow-y: auto; /* Добавляет прокрутку, если таблица слишком большая */
+}
+
+#QuantilesTableContainer table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#QuantilesTableContainer th,
+#QuantilesTableContainer td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: right; /* Выравнивание чисел по правому краю */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.header-content input[type="text"] {
+    margin-left: 10px;
+    padding: 4px;
+    width: 50%; /* Устанавливаем ширину фильтра */
+    box-sizing: border-box;
+}
+
+.header-content .sort-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 5px;
+}
+
+#PatternsTable th button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
 }
 
 #PatternsTable th::before {
@@ -356,22 +440,17 @@ input:checked + .slider {
     right: 0;
     border-bottom: 1px solid #ddd;
 }
-#PatternsTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    position: relative; /* Делаем ячейки таблицы относительно позиционированными */
-    top: -1px; /* Добавляем отрицательный отступ сверху */
+
+#download:hover {
+    background-color: #ddd; /* Цвет фона кнопки при наведении */
 }
 
-#TableContainer {
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-#PatternsTable {
-    display: none;
-    width: 100%; /* Устанавливаем ширину таблицы */
+#filterAntecedent,
+#filterConsequent {
+    display: block;
+    margin: 10px 0;
+    padding: 5px;
+    width: calc(50% - 10px); /* Устанавливаем ширину фильтров */
 }
 
 #download {
@@ -382,8 +461,4 @@ input:checked + .slider {
     color: #333; /* Цвет текста кнопки */
     cursor: pointer; /* Изменение курсора при наведении */
     transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
-}
-
-#download:hover {
-    background-color: #ddd; /* Цвет фона кнопки при наведении */
 }

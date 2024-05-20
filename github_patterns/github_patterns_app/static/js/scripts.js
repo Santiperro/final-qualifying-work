@@ -97,7 +97,6 @@ function load_data_submit() {
         return;
     }
     var selections = {};
-    // Заполняем selections перед отправкой данных
     var rows = document.querySelectorAll('tbody tr');
     rows.forEach(function(row) {
         var name = row.querySelector('td').textContent;
@@ -117,7 +116,6 @@ function load_data_submit() {
         }
     });
 
-    // Собираем значения полей ввода
     let data = {
         startDate: document.getElementById('startDate').value,
         endDate: document.getElementById('endDate').value,
@@ -132,7 +130,6 @@ function load_data_submit() {
     let errorDiv = document.getElementById('errorDiv');
     let notification = document.getElementById('notification');
 
-    // Отправляем запрос на сервер
     fetch('/load-data-submit', {
         method: 'POST',
         headers: {
@@ -179,6 +176,13 @@ function toggleSelection(element, id) {
 }
 
 function find_patterns_submit() {
+    document.getElementById('filterAntecedent').style.display = 'none';
+    document.getElementById('filterConsequent').style.display = 'none';
+    document.getElementById('TableContainer').style.display = 'none';
+    document.getElementById('download').style.display = 'none';
+    let errorDiv = document.getElementById('errorDiv');
+    errorDiv.style.display = 'none';
+
     validateNumbers('antecedent');
     validateNumbers('consequent');
     validateNumbers('minsup');
@@ -186,29 +190,22 @@ function find_patterns_submit() {
     validateNumbers('lift');
     let errorElements = document.querySelectorAll('.error');
     if (errorElements.length > 0) {
-        console.log(errorElements)
-        return;
+        console.log(errorElements);
+        return; 
     }
 
     let ids = selectedRows;
-
     if (ids.length === 0) {
-        let errorDiv = document.getElementById('errorDiv');
-        errorDiv.textContent = `Выберите минимум одну выборку`;
+        errorDiv.textContent = 'Выберите минимум одну выборку';
         errorDiv.style.display = 'block';
-        return;
+        return; 
     }
 
-    console.log(ids)
-
-    // Собираем значения полей ввода
     let antecedent = document.getElementById('antecedent').value;
     let consequent = document.getElementById('consequent').value;
     let minsup = document.getElementById('minsup').value;
     let minconf = document.getElementById('minconf').value;
     let lift = document.getElementById('lift').value;
-
-    // Формируем данные для отправки на сервер
     let data = {
         antecedent: antecedent,
         consequent: consequent,
@@ -218,7 +215,6 @@ function find_patterns_submit() {
         ids: ids
     };
 
-    // Отправляем запрос на сервер
     fetch('/find-patterns-submit', {
         method: 'POST',
         headers: {
@@ -228,35 +224,44 @@ function find_patterns_submit() {
     })
     .then((response) => {
         if (!response.ok) {
-            return response.json().then(json => { throw json });
+            throw new Error('Проблема с запросом');
         }
-        errorDiv.style.display = 'none';
         return response.json();
     })
     .then((data) => {
-        console.log('Success:', data);
-        // Здесь мы добавляем код для отображения таблицы
-        let patternsTable = document.getElementById('PatternsTable');
-        patternsTable.style.display = 'block'; // Показываем таблицу
-        let tbody = patternsTable.getElementsByTagName('tbody')[0];
+        document.getElementById('filterAntecedent').style.display = 'inline-block';
+        document.getElementById('filterConsequent').style.display = 'inline-block';
+        document.getElementById('TableContainer').style.display = 'block';
         document.getElementById('download').style.display = 'block';
-        tbody.innerHTML = ''; // Очищаем таблицу
-        for (let pattern of data) {
+        let tbody = document.getElementById('PatternsTable').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = ''; 
+
+        data.forEach(pattern => {
             let row = tbody.insertRow();
             row.insertCell().innerText = pattern.antecedents;
             row.insertCell().innerText = pattern.consequents;
             row.insertCell().innerText = pattern.support;
             row.insertCell().innerText = pattern.confidence;
-            row.insertCell().innerText = pattern.lift   ;
-        }
+            row.insertCell().innerText = pattern.lift;
+        });
     })
     .catch((error) => {
-        errorDiv.textContent = error.Error;
+        errorDiv.textContent = error.message;
         errorDiv.style.display = 'block';
-        console.error('Error:', error);
     });
 }
 
+function toggleQuantilesTable() {
+    let tableContainer = document.getElementById('QuantilesTableContainer');
+    let toggleIcon = document.getElementById('toggleIcon');
+    if (tableContainer.style.display === 'none') {
+        tableContainer.style.display = 'block';
+        toggleIcon.textContent = '▲';
+    } else {
+        tableContainer.style.display = 'none';
+        toggleIcon.textContent = '▼';
+    }
+}
 
 document.querySelectorAll('.delete-button').forEach(button => {
     button.addEventListener('click', function() {
@@ -275,8 +280,50 @@ document.querySelectorAll('.delete-button').forEach(button => {
     });
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.new-sample-button').addEventListener('click', () => {
+        window.location.href = '/request-data';
+    });
+});
+
 document.getElementById('download').addEventListener('click', function() {
     var table = document.getElementById('PatternsTable');
     var wb = XLSX.utils.table_to_book(table);
     XLSX.writeFile(wb, 'data.xlsx');
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('PatternsTable').style.display = 'table';
+});
+
+function filterTable(filterId, colIndex) {
+    const input = document.getElementById(filterId);
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('PatternsTable');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName('td')[colIndex];
+        if (td) {
+            const txtValue = td.textContent || td.innerText;
+            tr[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+        }
+    }
+}
+
+function sortTable(colIndex, ascending) {
+    const table = document.getElementById('PatternsTable');
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    rows.sort((a, b) => {
+        const aText = a.getElementsByTagName('td')[colIndex].textContent;
+        const bText = b.getElementsByTagName('td')[colIndex].textContent;
+        const aValue = parseFloat(aText.replace(',', '.')) || 0;
+        const bValue = parseFloat(bText.replace(',', '.')) || 0;
+
+        return ascending ? aValue - bValue : bValue - aValue;
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+}

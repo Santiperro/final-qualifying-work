@@ -4,6 +4,7 @@
 <div class="findpagecontent">
     <div class="container">
         <h4>Выберите данные для поиска шаблонов</h4>
+        {% if samples %}
         <table id="SamplesTable">
             <thead>
                 <tr>
@@ -39,6 +40,8 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% endif %}
+        <button class="new-sample-button" onclick="window.location.href='/request-data'">Получить новую выборку</button>
         <h4>Выберите параметры поиска шаблонов</h4>
         <div class="input-group">
             <label for="antecedent">Минимально элементов антецедента:</label>
@@ -62,15 +65,65 @@
         </div>
         <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
         <div id="errorDiv" class="errorDiv"></div>
-        <div id="TableContainer">
+        <button id="toggleQuantilesTable" onclick="toggleQuantilesTable()">
+            Показать таблицу квартилей/децилей
+            <span id="toggleIcon" style="display: inline-block;">▼</span>
+        </button>
+        <div id="QuantilesTableContainer" style="display: none;">
+            <table id="QuantilesTable">
+                <thead>
+                    <tr>
+                        <th>Квартиль</th>
+                        <th>Значение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="TableContainer" style="display: none;">
             <table id="PatternsTable">
                 <thead>
                     <tr>
-                        <th>Антецедент</th>
-                        <th>Консеквент</th>
-                        <th>Поддержка</th>
-                        <th>Достоверность</th>
-                        <th>Подъем</th>
+                        <th>
+                            <div class="header-content">
+                                <span>Антецедент</span>
+                                <input type="text" id="filterAntecedent" placeholder="Фильтр" onkeyup="filterTable('filterAntecedent', 0)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Консеквент</span>
+                                <input type="text" id="filterConsequent" placeholder="Фильтр" onkeyup="filterTable('filterConsequent', 1)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Поддержка</span>
+                                <div class="sort-buttons">
+                                    <button onclick="sortTable(2, true)">▲</button>
+                                    <button onclick="sortTable(2, false)">▼</button>
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Достоверность</span>
+                                <div class="sort-buttons">
+                                    <button onclick="sortTable(3, true)">▲</button>
+                                    <button onclick="sortTable(3, false)">▼</button>
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Подъем</span>
+                                <div class="sort-buttons">
+                                    <button onclick="sortTable(4, true)">▲</button>
+                                    <button onclick="sortTable(4, false)">▼</button>
+                                </div>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

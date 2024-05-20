@@ -9,8 +9,8 @@ class PatternMiner():
                       min_supp, 
                       min_conf,
                       min_lift,
-                      max_left_elements=3, 
-                      max_right_elements=1):
+                      min_left_elements=3, 
+                      min_right_elements=1):
         
         def rename_column(name):
             if '_' in name:
@@ -56,8 +56,8 @@ class PatternMiner():
         if min_conf:
             rules = rules[rules["confidence"] >= min_conf]
             
-        rules["antecedents"] = rules["antecedents"].apply(lambda x: x if len(x) <= max_left_elements else None)
-        rules["consequents"] = rules["consequents"].apply(lambda x: x if len(x) <= max_right_elements else None)
+        rules["antecedents"] = rules["antecedents"].apply(lambda x: x if len(x) >= min_left_elements else None)
+        rules["consequents"] = rules["consequents"].apply(lambda x: x if len(x) >= min_right_elements else None)
         rules["antecedents"] = rules["antecedents"].apply(lambda x: cell_to_string(x))
         rules["consequents"] = rules["consequents"].apply(lambda x: cell_to_string(x))
         rules.dropna(inplace=True)

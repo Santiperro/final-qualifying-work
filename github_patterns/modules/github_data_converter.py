@@ -11,7 +11,8 @@ class GithubDataConverter():
 
     def convert_data_to_transactions(self, 
                                      repos_data:pd.DataFrame, 
-                                     quantile_config: dict[str, str]):
+                                     quantile_config: dict[str, str],
+                                     return_quantiles=False):
         """
         quantile_conf example:
         {'pushes': 'dec',
@@ -40,6 +41,9 @@ class GithubDataConverter():
         transactions = pd.get_dummies(quantile_data, prefix='')
         
         transactions = self.__delete_column_names(transactions)
+        
+        if return_quantiles:
+            return transactions, quantile_column_values
         
         return transactions
     

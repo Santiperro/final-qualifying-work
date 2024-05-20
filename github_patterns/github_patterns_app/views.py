@@ -19,7 +19,7 @@ TRANSACTION_ITEMS_DATA_TYPE = list(pd.read_json("dtype_conf.json")["dtype"])
 
 
 def find_patterns(request):
-    samples = SampleParams.objects.all()
+    samples = SampleParams.objects.all().order_by('-save_time')
     return render(request, 'find_patterns.html', {'samples': samples})
 
 
@@ -62,7 +62,6 @@ def load_data_submit(request):
             status_value = 'ON' if decode_name in request_params["items"] else 'OFF'
             division_value = str(request_params["items"].get(decode_name, 'NONE')).upper()
             
-            # Создаем новые объекты с обновленными полями
             attribute_info[items_decode_name_name_dict[decode_name]] = {
                 'status': status_value,
                 'division': division_value
@@ -70,7 +69,6 @@ def load_data_submit(request):
         
         print(attribute_info)
         
-        # Обновление параметров sample_params
         sample_params = SampleParams(
             save_time=datetime.now(),
             start_date=request_params["startDate"],
@@ -154,15 +152,18 @@ def find_patterns_submit(request):
             return JsonResponse({'Error': str(e)}, status=400)
         
         github_data_converter = GithubDataConverter()
-        transactions = github_data_converter.convert_data_to_transactions(repository_data, 
-                                                                          quantile_config)
+        transactions, quantile_table = github_data_converter.convert_data_to_transactions(repository_data, 
+                                                                          quantile_config,
+                                                                          return_quantiles=True)
+        
+        print(quantile_table)
         pattern_miner = PatternMiner()
         github_patterns = pattern_miner.mine_patterns(transactions, 
                                                     min_supp=float(data['minsup']),
                                                     min_conf=float(data['minconf']),
                                                     min_lift=float(data['lift']),
-                                                    max_left_elements=int(data['antecedent']),
-                                                    max_right_elements=int(data['consequent']))
+                                                    min_left_elements=int(data['antecedent']),
+                                                    min_right_elements=int(data['consequent']))
         if github_patterns.empty:
             return JsonResponse({'Error': 'Шаблоны не найдены. Попробуйте изменить параметры'}, status=400)
         else:
@@ -199,7 +200,6 @@ def get_github_repository_data(sample_ids):
                 'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else None
             }
         else:
-            # Проверяем, соответствует ли словарь атрибутов текущей выборке
             current_attribute_dict = {
                 'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else None,
                 'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else None,
