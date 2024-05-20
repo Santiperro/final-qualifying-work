@@ -39,7 +39,7 @@ class GithubDataConverter():
 
         transactions = pd.get_dummies(quantile_data, prefix='')
         
-        transactions = self.__delete__column_names(transactions)
+        transactions = self.__delete_column_names(transactions)
         
         return transactions
     
@@ -51,6 +51,18 @@ class GithubDataConverter():
             if np.issubdtype(edited_column_names[column].dtype, np.number):
                 edited_column_names[column] = edited_column_names[column].apply(
                     lambda x: f'{column} {x}')
+                
+        if 'language' in edited_column_names.columns:
+            edited_column_names['language'] = edited_column_names['language'].apply(
+                lambda x: 'Язык_' + x if x != 'None' else x)
+                
+        if 'license_name' in edited_column_names.columns:
+            
+            edited_column_names['license_name'] = edited_column_names['license_name'].apply(
+                lambda x: 'Лицензия_' + x if x != 'None' else x)
+            
+            edited_column_names['license_name'] = edited_column_names['license_name'].replace([None, 'None'], 'No license')
+            
         return edited_column_names
     
     def __convert_data_to_quantile_numbers(self, 
@@ -108,7 +120,7 @@ class GithubDataConverter():
        
         return clean_data
     
-    def __delete__column_names(self, transaction_data):
+    def __delete_column_names(self, transaction_data):
         def edit_column_names(string):
             string = string.replace('_', '', 1)  # Удаление только первых символов '_'
             string = string.replace('_', ' ')  # Замена всех остальных символов '_' на пробел

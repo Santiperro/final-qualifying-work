@@ -1,7 +1,7 @@
 from django.db import models
-
-
-class AttributeInfo(models.Model):
+    
+    
+class SampleParams(models.Model):
     STATUS_CHOICES = [
         ('ON', 'On'),
         ('OFF', 'Off')
@@ -11,19 +11,7 @@ class AttributeInfo(models.Model):
         ('QUA', 'Qua'),
         ('NONE', 'None')
     ]
-    status = models.CharField(
-        max_length=3,
-        choices=STATUS_CHOICES
-    )
-    division = models.CharField(
-        max_length=4,
-        choices=DIVISION
-    )
     
-    def __str__(self):
-        return f"Status: {self.get_status_display()}, Division: {self.get_division_display()}"
-    
-class SampleParams(models.Model):
     save_time = models.DateTimeField()
     start_date = models.DateField()
     end_date = models.DateField()
@@ -34,43 +22,92 @@ class SampleParams(models.Model):
     note = models.CharField(max_length=200, null=True)
     
     # Sample attributes params:
-    pushes_duration_info = models.OneToOneField(AttributeInfo, 
-                                             on_delete=models.CASCADE, 
-                                             related_name='pushes_info')
-    avg_push_size_info = models.OneToOneField(AttributeInfo, 
-                                           on_delete=models.CASCADE, 
-                                           related_name='avg_push_size_info')
-    pull_requests_info = models.OneToOneField(AttributeInfo, 
-                                           on_delete=models.CASCADE, 
-                                           related_name='pull_requests_info')
-    merged_pull_requests_ratio_info = models.OneToOneField(AttributeInfo, 
-                                                        on_delete=models.CASCADE, 
-                                                        related_name='merged_pull_requests_ratio_info')
-    issues_info = models.OneToOneField(AttributeInfo, 
-                                    on_delete=models.CASCADE, 
-                                    related_name='issues_info')
-    closed_issues_ratio_info = models.OneToOneField(AttributeInfo, 
-                                                 on_delete=models.CASCADE, 
-                                                 related_name='closed_issues_ratio_info')
-    watches_info = models.OneToOneField(AttributeInfo, 
-                                     on_delete=models.CASCADE, 
-                                     related_name='watches_info')
-    forks_info = models.OneToOneField(AttributeInfo, 
-                                   on_delete=models.CASCADE, 
-                                   related_name='forks_info')
-    new_members_info = models.OneToOneField(AttributeInfo, 
-                                         on_delete=models.CASCADE, 
-                                         related_name='new_members_info')
-    language_info = models.OneToOneField(AttributeInfo, 
-                                         on_delete=models.CASCADE, 
-                                         related_name='language_info')
-    license_name_info = models.OneToOneField(AttributeInfo, 
-                                         on_delete=models.CASCADE, 
-                                         related_name='license_name_info')
-    is_deleted_or_private_info = models.OneToOneField(AttributeInfo, 
-                                         on_delete=models.CASCADE, 
-                                         related_name='is_deleted_or_private_info')
-
+    pushes_duration_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    pushes_duration_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    avg_push_size_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    avg_push_size_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    pull_requests_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    pull_requests_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    merged_pull_requests_ratio_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    merged_pull_requests_ratio_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    issues_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    issues_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    closed_issues_ratio_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    closed_issues_ratio_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    watches_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    watches_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    forks_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    forks_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    new_members_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    new_members_division = models.CharField(
+        max_length=4,
+        choices=DIVISION
+    )
+    language_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    license_name_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    is_deleted_or_private_status = models.CharField(
+        max_length=3,
+        choices=STATUS_CHOICES
+    )
+    
+    
 class RepositoryData(models.Model):
     data_params_id = models.ForeignKey(SampleParams, 
                                           on_delete=models.CASCADE, 

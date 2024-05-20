@@ -45,7 +45,19 @@ class ServiceConnector():
                        min_members_count: int = DEFAULT_MIN_MEMBERS_COUNT,
                        is_new_repos: bool = False) -> pd.DataFrame:
         """
-        transaction_composition example:
+        Получение данных из сервисов.
+        
+        transaction_composition: список строк, определяющих состав транзакции.
+        start_date: начальная дата в формате 'YYYY-MM-DD'.
+        end_date: конечная дата в формате 'YYYY-MM-DD'. Если None, то используется текущая дата.
+        limit: максимальное количество записей для получения. По умолчанию 1000.
+        min_watch_event_count: минимальное количество событий просмотра. По умолчанию 10.
+        min_members_count: минимальное количество участников. По умолчанию 3.
+        is_new_repos: флаг, указывающий на то, являются ли репозитории новыми. По умолчанию False.
+        
+        Возвращает DataFrame с данными репозиториев.
+        
+        Пример: transaction_composition:
         ['pushes',
         'avg_push_size',
         'pull_requests',
@@ -69,9 +81,40 @@ class ServiceConnector():
                                            limit,
                                            min_watch_event_count,
                                            min_new_members_count,
-                                           is_new_repos)
+                                           is_new_repos,
+                                           transaction_composition)
+        
+        delay = self.__get_delay(start_date, 
+                                 end_date,
+                                 min_watch_event_count,
+                                 min_new_members_count,
+                                 is_new_repos)
+
+        clickhouse_data = self.__get_clickhouse_data(query, delay)
+        filtered_data = self.__filter_clickhouse_data_columns(clickhouse_data, 
+                                                        transaction_composition)
+        
+        api_columns = self.__get_github_api_columns(transaction_composition)
+        
+        github_api_data = await self.__get_github_api_data(
+                                                    filtered_data["repo"], 
+                                                    api_columns)
+        
+        repo_data = filtered_data.join(github_api_data.set_index("repo"), 
+                                         on="repo")
+    
+        repo_data = self.__format_data_types(repo_data)
+        return repo_data
+    
+    def __get_delay(self, 
+                    start_date,
+                    end_date,
+                    min_watch_event_count,
+                    min_members_count,
+                    is_new_repos):
         
         delay = self.REQUEST_DELAY
+        
         if min_watch_event_count > 0:
             delay += 10
         if min_members_count > 1:
@@ -85,24 +128,7 @@ class ServiceConnector():
         difference = relativedelta.relativedelta(end_date, start_date)
         months_difference = difference.years * 12 + difference.months
         delay += 2 * months_difference
-        
-        print(delay)
-
-        
-        clickhouse_data = self.__get_clickhouse_data(query, delay)
-        clickhouse_data = self.__filter_clickhouse_data_columns(clickhouse_data, 
-                                                        transaction_composition)
-        
-        api_columns = self.__get_github_api_columns(transaction_composition)
-        github_api_data = await self.__get_github_api_data(
-                                                    clickhouse_data["repo"], 
-                                                    api_columns)
-        
-        repo_data = clickhouse_data.join(github_api_data.set_index("repo"), 
-                                         on="repo")
-    
-        repo_data = self.__format_data_types(repo_data)
-        return repo_data
+        return delay
     
     def __get_github_api_columns(self, transaction_composition: list):
         source_condition = self.data_configuration["source"] == "githubApi"
@@ -118,17 +144,70 @@ class ServiceConnector():
         
         for column in filtered_data.columns:
             if not (column in transaction_composition or column == 'repo'):
-                filtered_data[column].fillna(value=np.nan, inplace=True)
+                filtered_data.drop(columns=[column], inplace=True)
             
         return filtered_data
 
     def __get_query_by_params(self, 
-                              start_date: str,
-                              end_date: str,  
-                              limit: int,
-                              min_watch_event_count: int,
-                              min_new_members_count: int,
-                              is_new_repos: bool):
+                            start_date: str,
+                            end_date: str,  
+                            limit: int,
+                            min_watch_event_count: int,
+                            min_new_members_count: int,
+                            is_new_repos: bool,
+                            selected_attributes: list):
+
+        attribute_queries = {
+            'pushes': "pushEvents.pushEventCount as pushes",
+            'avg_push_size': "pushEvents.avgPushSize as avg_push_size",
+            'pull_requests': "pullRequestEvents.pullRequestEventCount as pull_requests",
+            'merged_pull_requests_ratio': "pullRequestEvents.mergedPullRequestEventRatio as merged_pull_requests_ratio",
+            'issues': "issuesEvents.issuesEventCount as issues",
+            'closed_issues_ratio': "issuesEvents.closedIssuesRatio as closed_issues_ratio",
+            'watches': "watchEvents.watchEventCount as watches",
+            'forks': "forkEvents.forkEventCount as forks",
+            'new_members': "newMemberEvents.memberEventCount as new_members"
+        }
+
+        # Include 'repo' as a default attribute
+        select_clause = ["outerQuery.repo_name as repo"]
+        join_clauses = []
+
+        if 'pushes' in selected_attributes or 'avg_push_size' in selected_attributes:
+            select_clause.extend([
+                attribute_queries['pushes'],
+                attribute_queries['avg_push_size']
+            ])
+            join_clauses.append(PUSH_EVENTS_QUERY.format(start_date=start_date, end_date=end_date))
+
+        if 'pull_requests' in selected_attributes or 'merged_pull_requests_ratio' in selected_attributes:
+            select_clause.extend([
+                attribute_queries['pull_requests'],
+                attribute_queries['merged_pull_requests_ratio']
+            ])
+            join_clauses.append(PULL_REQUEST_EVENTS_QUERY.format(start_date=start_date, end_date=end_date))
+
+        if 'issues' in selected_attributes or 'closed_issues_ratio' in selected_attributes:
+            select_clause.extend([
+                attribute_queries['issues'],
+                attribute_queries['closed_issues_ratio']
+            ])
+            join_clauses.append(ISSUES_EVENTS_QUERY.format(start_date=start_date, end_date=end_date))
+
+        if 'watches' in selected_attributes:
+            select_clause.append(attribute_queries['watches'])
+            join_clauses.append(WATCH_EVENTS_QUERY.format(start_date=start_date, end_date=end_date))
+
+        if 'forks' in selected_attributes:
+            select_clause.append(attribute_queries['forks'])
+            join_clauses.append(FORK_EVENTS_QUERY.format(start_date=start_date, end_date=end_date))
+
+        if 'new_members' in selected_attributes:
+            select_clause.append(attribute_queries['new_members'])
+            join_clauses.append(NEW_MEMBER_EVENTS_QUERY.format(start_date=start_date, end_date=end_date))
+
+        select_clause_str = ", ".join(select_clause)
+        join_clauses_str = " ".join(join_clauses)
         
         new_repos_filter = NEW_REPOS_QUERY_FILTER if is_new_repos else ''
         
@@ -143,16 +222,16 @@ class ServiceConnector():
             end_date=end_date,
             new_members_count=min_new_members_count
         ) if min_new_members_count > 0 else '')
-            
-        # making sql query
-        query = CLICKHOUSE_DATA_QUERY.format( 
-                start_date=start_date, 
-                end_date=end_date,
-                limit=limit,
-                new_repos_filter=new_repos_filter,
-                min_watches_filter=min_watches_filter,
-                min_members_filter=min_members_filter
-        )
+        
+        query = CLICKHOUSE_DATA_QUERY.format(select_clause_str=select_clause_str,
+                                            start_date=start_date,
+                                            end_date=end_date,
+                                            new_repos_filter=new_repos_filter,
+                                            min_watches_filter=min_watches_filter,
+                                            min_members_filter=min_members_filter,
+                                            join_clauses_str=join_clauses_str,
+                                            limit=limit)
+    
         return query
     
     def __format_data_types(self, data):

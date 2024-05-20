@@ -6,7 +6,7 @@ import pandas as pd
 import json
 import asyncio
 from django.views.decorators.csrf import csrf_exempt
-from github_patterns_app.models import SampleParams, RepositoryData, AttributeInfo
+from github_patterns_app.models import SampleParams, RepositoryData
 from modules.service_connector import ServiceConnector
 from modules.github_data_converter import GithubDataConverter
 from modules.pattern_miner import PatternMiner
@@ -14,13 +14,12 @@ from modules.exceptions import *
 
 
 TRANSACTION_ITEMS_NAMES = list(pd.read_json("dtype_conf.json")["columnName"])
-transaction_items_decode_names = list(pd.read_json("dtype_conf.json")["decode"])
-transaction_items_data_type = list(pd.read_json("dtype_conf.json")["dtype"])
+TRANSACTION_ITEMS_DECODE_NAMES = list(pd.read_json("dtype_conf.json")["decode"])
+TRANSACTION_ITEMS_DATA_TYPE = list(pd.read_json("dtype_conf.json")["dtype"])
 
 
 def find_patterns(request):
     samples = SampleParams.objects.all()
-
     return render(request, 'find_patterns.html', {'samples': samples})
 
 
@@ -40,8 +39,9 @@ def load_data_submit(request):
         
         for decode_name in request_params["items"]:
             if decode_name in items_decode_name_name_dict:
-                decode_name = items_decode_name_name_dict[decode_name]
-                current_transaction_items_names.append(decode_name)
+                columnName = items_decode_name_name_dict[decode_name]
+                current_transaction_items_names.append(columnName)
+                
         
         service_connector = ServiceConnector()
         try:
@@ -57,26 +57,20 @@ def load_data_submit(request):
                 InsufficientRowsError) as e:
             return JsonResponse({'Error': str(e)}, status=400)
         
-        attribute_info_objects = {} 
-        for decode_name in transaction_items_decode_names:
-            if decode_name in request_params["items"]:
-                attribute_info = AttributeInfo(
-                    status='ON',
-                    division=str(request_params["items"][decode_name]).upper()
-                )
-                item_name = items_decode_name_name_dict[decode_name]
-                attribute_info_objects[item_name] = attribute_info
-                attribute_info.save()
-            else:
-                attribute_info = AttributeInfo(
-                    status='OFF',
-                    division='NONE'
-                )
-                item_name = items_decode_name_name_dict[decode_name]
-                attribute_info_objects[item_name] = attribute_info
-                attribute_info.save()
-        print(attribute_info_objects)
+        attribute_info = {} 
+        for decode_name in TRANSACTION_ITEMS_DECODE_NAMES:
+            status_value = 'ON' if decode_name in request_params["items"] else 'OFF'
+            division_value = str(request_params["items"].get(decode_name, 'NONE')).upper()
+            
+            # Создаем новые объекты с обновленными полями
+            attribute_info[items_decode_name_name_dict[decode_name]] = {
+                'status': status_value,
+                'division': division_value
+            }
         
+        print(attribute_info)
+        
+        # Обновление параметров sample_params
         sample_params = SampleParams(
             save_time=datetime.now(),
             start_date=request_params["startDate"],
@@ -86,18 +80,27 @@ def load_data_submit(request):
             min_watch_count=request_params["minStars"],
             is_new_repos=request_params["isNewRepos"],
             note=request_params["note"],
-            pushes_duration_info=attribute_info_objects.get('pushes'),
-            avg_push_size_info=attribute_info_objects.get('avg_push_size'),
-            pull_requests_info=attribute_info_objects.get('pull_requests'),
-            merged_pull_requests_ratio_info=attribute_info_objects.get('merged_pull_requests_ratio'),
-            issues_info=attribute_info_objects.get('issues'),
-            closed_issues_ratio_info=attribute_info_objects.get('closed_issues_ratio'),
-            watches_info=attribute_info_objects.get('watches'),
-            forks_info=attribute_info_objects.get('forks'),
-            new_members_info=attribute_info_objects.get('new_members'),
-            language_info=attribute_info_objects.get('language'),
-            license_name_info=attribute_info_objects.get('license_name'),
-            is_deleted_or_private_info=attribute_info_objects.get('is_deleted_or_private')
+            pushes_duration_status=attribute_info.get('pushes', {}).get('status'),
+            pushes_duration_division=attribute_info.get('pushes', {}).get('division'),
+            avg_push_size_status=attribute_info.get('avg_push_size', {}).get('status'),
+            avg_push_size_division=attribute_info.get('avg_push_size', {}).get('division'),
+            pull_requests_status=attribute_info.get('pull_requests', {}).get('status'),
+            pull_requests_division=attribute_info.get('pull_requests', {}).get('division'),
+            merged_pull_requests_ratio_status=attribute_info.get('merged_pull_requests_ratio', {}).get('status'),
+            merged_pull_requests_ratio_division=attribute_info.get('merged_pull_requests_ratio', {}).get('division'),
+            issues_status=attribute_info.get('issues', {}).get('status'),
+            issues_division=attribute_info.get('issues', {}).get('division'),
+            closed_issues_ratio_status=attribute_info.get('closed_issues_ratio', {}).get('status'),
+            closed_issues_ratio_division=attribute_info.get('closed_issues_ratio', {}).get('division'),
+            watches_status=attribute_info.get('watches', {}).get('status'),
+            watches_division=attribute_info.get('watches', {}).get('division'),
+            forks_status=attribute_info.get('forks', {}).get('status'),
+            forks_division=attribute_info.get('forks', {}).get('division'),
+            new_members_status=attribute_info.get('new_members', {}).get('status'),
+            new_members_division=attribute_info.get('new_members', {}).get('division'),
+            language_status=attribute_info.get('language', {}).get('status'),
+            license_name_status=attribute_info.get('license_name', {}).get('status'),
+            is_deleted_or_private_status=attribute_info.get('is_deleted_or_private', {}).get('status'),
         )
         sample_params.save()
         
@@ -105,19 +108,19 @@ def load_data_submit(request):
             for index, row in github_data.iterrows():
                 repo_data = RepositoryData(
                     data_params_id=sample_params,
-                    repo_name=row['repo'],
-                    pushes=row['pushes'],
-                    avg_push_size=row['avg_push_size'],
-                    pull_requests=row['pull_requests'],
-                    merged_pull_requests_ratio=row['merged_pull_requests_ratio'],
-                    issues=row['issues'],
-                    closed_issues_ratio=row['closed_issues_ratio'],
-                    watches=row['watches'],
-                    forks=row['forks'],
-                    new_members=row['new_members'],
-                    language=row['language'],
-                    license_name=row['license_name'],
-                    is_deleted_or_private=row['is_deleted_or_private']
+                    repo_name=row.get('repo', None),
+                    pushes=row.get('pushes', None),
+                    avg_push_size=row.get('avg_push_size', None),
+                    pull_requests=row.get('pull_requests', None),
+                    merged_pull_requests_ratio=row.get('merged_pull_requests_ratio', None),
+                    issues=row.get('issues', None),
+                    closed_issues_ratio=row.get('closed_issues_ratio', None),
+                    watches=row.get('watches', None),
+                    forks=row.get('forks', None),
+                    new_members=row.get('new_members', None),
+                    language=row.get('language', None),
+                    license_name=row.get('license_name', None),
+                    is_deleted_or_private=row.get('is_deleted_or_private', None)
                 )
                 repo_data.save()
         
@@ -125,31 +128,18 @@ def load_data_submit(request):
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+
 @csrf_exempt
 def delete_sample(request, id):
     if request.method == 'DELETE':
         try:
            with transaction.atomic():
                 sample = SampleParams.objects.get(id=id)
-                if AttributeInfo.objects.filter(id=sample.pushes_duration_info.id).exists():
-                    AttributeInfo.objects.filter(id=sample.pushes_duration_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.avg_push_size_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.pull_requests_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.merged_pull_requests_ratio_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.issues_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.closed_issues_ratio_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.watches_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.forks_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.new_members_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.language_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.license_name_info.id).delete()
-                    AttributeInfo.objects.filter(id=sample.is_deleted_or_private_info.id).delete()
-
                 sample.delete()
-                
                 return JsonResponse({'success': True})
+            
         except SampleParams.DoesNotExist:
-            return JsonResponse({'error': 'Sample not found', 'success': False})\
+            return JsonResponse({'error': 'Sample not found', 'success': False})
   
                 
 @csrf_exempt
@@ -195,37 +185,39 @@ def get_github_repository_data(sample_ids):
     
         if not attribute_dict:
             attribute_dict = {
-                'pushes': sample.pushes_duration_info.division.lower() if sample.pushes_duration_info.status == 'ON' else 'None',
-                'avg_push_size': sample.avg_push_size_info.division.lower() if sample.avg_push_size_info.status == 'ON' else 'None',
-                'pull_requests': sample.pull_requests_info.division.lower() if sample.pull_requests_info.status == 'ON' else 'None',
-                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_info.division.lower() if sample.merged_pull_requests_ratio_info.status == 'ON' else 'None',
-                'issues': sample.issues_info.division.lower() if sample.issues_info.status == 'ON' else 'None',
-                'closed_issues_ratio': sample.closed_issues_ratio_info.division.lower() if sample.closed_issues_ratio_info.status == 'ON' else 'None',
-                'watches': sample.watches_info.division.lower() if sample.watches_info.status == 'ON' else 'None',
-                'forks': sample.forks_info.division.lower() if sample.forks_info.status == 'ON' else 'None',
-                'new_members': sample.new_members_info.division.lower() if sample.new_members_info.status == 'ON' else 'None',
-                'language': sample.language_info.division.lower() if sample.language_info.status == 'ON' else 'None',
-                'license_name': sample.license_name_info.division.lower() if sample.license_name_info.status == 'ON' else 'None',
-                'is_deleted_or_private': sample.is_deleted_or_private_info.division.lower() if sample.is_deleted_or_private_info.status == 'ON' else 'None'
+                'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else None,
+                'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else None,
+                'pull_requests': sample.pull_requests_division.lower() if sample.pull_requests_status == 'ON' else None,
+                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_division.lower() if sample.merged_pull_requests_ratio_status == 'ON' else None,
+                'issues': sample.issues_division.lower() if sample.issues_status == 'ON' else None,
+                'closed_issues_ratio': sample.closed_issues_ratio_division.lower() if sample.closed_issues_ratio_status == 'ON' else None,
+                'watches': sample.watches_division.lower() if sample.watches_status == 'ON' else None,
+                'forks': sample.forks_division.lower() if sample.forks_status == 'ON' else None,
+                'new_members': sample.new_members_division.lower() if sample.new_members_status == 'ON' else None,
+                'language': 'None' if sample.language_status == 'ON' else None,
+                'license_name': 'None' if sample.license_name_status == 'ON' else None,
+                'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else None
             }
         else:
             # Проверяем, соответствует ли словарь атрибутов текущей выборке
             current_attribute_dict = {
-                'pushes': sample.pushes_duration_info.division.lower() if sample.pushes_duration_info.status == 'ON' else 'None',
-                'avg_push_size': sample.avg_push_size_info.division.lower() if sample.avg_push_size_info.status == 'ON' else 'None',
-                'pull_requests': sample.pull_requests_info.division.lower() if sample.pull_requests_info.status == 'ON' else 'None',
-                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_info.division.lower() if sample.merged_pull_requests_ratio_info.status == 'ON' else 'None',
-                'issues': sample.issues_info.division.lower() if sample.issues_info.status == 'ON' else 'None',
-                'closed_issues_ratio': sample.closed_issues_ratio_info.division.lower() if sample.closed_issues_ratio_info.status == 'ON' else 'None',
-                'watches': sample.watches_info.division.lower() if sample.watches_info.status == 'ON' else 'None',
-                'forks': sample.forks_info.division.lower() if sample.forks_info.status == 'ON' else 'None',
-                'new_members': sample.new_members_info.division.lower() if sample.new_members_info.status == 'ON' else 'None',
-                'language': sample.language_info.division.lower() if sample.language_info.status == 'ON' else 'None',
-                'license_name': sample.license_name_info.division.lower() if sample.license_name_info.status == 'ON' else 'None',
-                'is_deleted_or_private': sample.is_deleted_or_private_info.division.lower() if sample.is_deleted_or_private_info.status == 'ON' else 'None'
+                'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else None,
+                'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else None,
+                'pull_requests': sample.pull_requests_division.lower() if sample.pull_requests_status == 'ON' else None,
+                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_division.lower() if sample.merged_pull_requests_ratio_status == 'ON' else None,
+                'issues': sample.issues_division.lower() if sample.issues_status == 'ON' else None,
+                'closed_issues_ratio': sample.closed_issues_ratio_division.lower() if sample.closed_issues_ratio_status == 'ON' else None,
+                'watches': sample.watches_division.lower() if sample.watches_status == 'ON' else None,
+                'forks': sample.forks_division.lower() if sample.forks_status == 'ON' else None,
+                'new_members': sample.new_members_division.lower() if sample.new_members_status == 'ON' else None,
+                'language': 'None' if sample.language_status == 'ON' else None,
+                'license_name': 'None' if sample.license_name_status == 'ON' else None,
+                'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else None
             }
             if attribute_dict != current_attribute_dict:
-                raise ValueError("Атрибуты выборок не совпадают")
+                raise ValueError("Параметры состава транзакций выборок не совпадают")
+    
+    print(attribute_dict)
     
     attribute_dict = {key: value for key, value in attribute_dict.items() if value != 'None'}
     
@@ -238,15 +230,15 @@ def get_github_repository_data(sample_ids):
         
 def get_items_name_dtype_dict():
     items_data_type_dict = {}
-    for decode_name, dtype in zip(transaction_items_decode_names, 
-                           transaction_items_data_type):
+    for decode_name, dtype in zip(TRANSACTION_ITEMS_DECODE_NAMES, 
+                           TRANSACTION_ITEMS_DATA_TYPE):
         items_data_type_dict[decode_name] = dtype
     return items_data_type_dict
 
 
 def get_items_decode_name_name_dict():
     items_decode_name_name_dict = {}
-    for decode_name, name  in zip(transaction_items_decode_names, 
+    for decode_name, name  in zip(TRANSACTION_ITEMS_DECODE_NAMES, 
                                  TRANSACTION_ITEMS_NAMES):
         items_decode_name_name_dict[decode_name] = name
     return items_decode_name_name_dict
