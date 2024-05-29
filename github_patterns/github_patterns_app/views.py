@@ -152,11 +152,9 @@ def find_patterns_submit(request):
             return JsonResponse({'Error': str(e)}, status=400)
         
         github_data_converter = GithubDataConverter()
-        transactions, quantile_table = github_data_converter.convert_data_to_transactions(repository_data, 
+        transactions, quartiles, deciles = github_data_converter.convert_data_to_transactions(repository_data, 
                                                                           quantile_config,
                                                                           return_quantiles=True)
-        
-        print(quantile_table)
         pattern_miner = PatternMiner()
         github_patterns = pattern_miner.mine_patterns(transactions, 
                                                     min_supp=float(data['minsup']),
@@ -165,10 +163,14 @@ def find_patterns_submit(request):
                                                     min_left_elements=int(data['antecedent']),
                                                     min_right_elements=int(data['consequent']))
         if github_patterns.empty:
-            return JsonResponse({'Error': 'Шаблоны не найдены. Попробуйте изменить параметры'}, status=400)
+                return JsonResponse({'Error': 'Шаблоны не найдены. Попробуйте изменить параметры'}, status=400)
         else:
-            return JsonResponse(github_patterns.to_dict(orient='records'), 
-                                    safe=False)
+            response_data = {
+                'patterns': github_patterns.to_dict(orient='records'),
+                'quartiles': quartiles.to_dict(orient='records'),
+                'deciles': deciles.to_dict(orient='records')
+            }
+            return JsonResponse(response_data, safe=False)
         
     
 def get_github_repository_data(sample_ids):

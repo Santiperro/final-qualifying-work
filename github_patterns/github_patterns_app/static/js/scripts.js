@@ -130,6 +130,13 @@ function load_data_submit() {
     let errorDiv = document.getElementById('errorDiv');
     let notification = document.getElementById('notification');
 
+    if (Object.keys(selections).length < 3) {
+        errorDiv.textContent = 'Выберите минимум 3 элемента транзакции';
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+
     fetch('/load-data-submit', {
         method: 'POST',
         headers: {
@@ -175,11 +182,26 @@ function toggleSelection(element, id) {
     console.log(selectedRows);
 }
 
+function getPatternWordEnding(number) {
+    let lastDigit = number % 10;
+    let lastTwoDigits = number % 100;
+    if (lastDigit === 1 && lastTwoDigits !== 11) {
+        return 'шаблон';
+    } else if ([2, 3, 4].includes(lastDigit) && ![12, 13, 14].includes(lastTwoDigits)) {
+        return 'шаблона';
+    } else {
+        return 'шаблонов';
+    }
+}
+
 function find_patterns_submit() {
     document.getElementById('filterAntecedent').style.display = 'none';
     document.getElementById('filterConsequent').style.display = 'none';
     document.getElementById('TableContainer').style.display = 'none';
     document.getElementById('download').style.display = 'none';
+    document.getElementById('QuantilesTableContainer').style.display = 'none';
+    document.getElementById('toggleQuantilesBtn').style.display = 'none';
+    document.getElementById('TableContainerName').style.display = 'none';
     let errorDiv = document.getElementById('errorDiv');
     errorDiv.style.display = 'none';
 
@@ -224,8 +246,9 @@ function find_patterns_submit() {
     })
     .then((response) => {
         if (!response.ok) {
-            throw new Error('Проблема с запросом');
+            return response.json().then(json => { throw json });
         }
+        errorDiv.style.display = 'none';
         return response.json();
     })
     .then((data) => {
@@ -233,35 +256,100 @@ function find_patterns_submit() {
         document.getElementById('filterConsequent').style.display = 'inline-block';
         document.getElementById('TableContainer').style.display = 'block';
         document.getElementById('download').style.display = 'block';
+        document.getElementById('toggleQuantilesBtn').style.display = 'block';
+        document.getElementById('TableContainerName').style.display = 'block';
+        
         let tbody = document.getElementById('PatternsTable').getElementsByTagName('tbody')[0];
         tbody.innerHTML = ''; 
 
-        data.forEach(pattern => {
-            let row = tbody.insertRow();
-            row.insertCell().innerText = pattern.antecedents;
-            row.insertCell().innerText = pattern.consequents;
-            row.insertCell().innerText = pattern.support;
-            row.insertCell().innerText = pattern.confidence;
-            row.insertCell().innerText = pattern.lift;
-        });
+        if (Array.isArray(data.patterns)) {
+            let patternWordEnding = getPatternWordEnding(data.patterns.length);
+            document.getElementById('TableContainerName').textContent = `Найдено ${data.patterns.length} ${patternWordEnding}:`;
+
+            data.patterns.forEach(pattern => {
+                let row = tbody.insertRow();
+                row.insertCell().innerText = pattern.antecedents;
+                row.insertCell().innerText = pattern.consequents;
+                row.insertCell().innerText = pattern.support;
+                row.insertCell().innerText = pattern.confidence;
+                row.insertCell().innerText = pattern.lift;
+            });
+        }
+
+        if (Array.isArray(data.quartiles) && data.quartiles.length > 0) {
+            populateTable('QuartilesTable', 'QuartilesTableHeader', data.quartiles);
+        }
+
+        if (Array.isArray(data.deciles) && data.deciles.length > 0) {
+            populateTable('DecilesTable', 'DecilesTableHeader', data.deciles);
+        }
+
+        document.getElementById('QuantilesTableContainer').style.display = 'block';
     })
     .catch((error) => {
-        errorDiv.textContent = error.message;
+        errorDiv.textContent = error.Error;
         errorDiv.style.display = 'block';
+        console.error('Error:', error);
     });
 }
 
-function toggleQuantilesTable() {
-    let tableContainer = document.getElementById('QuantilesTableContainer');
+function toggleQuantiles() {
+    let tablesDiv = document.getElementById('QuantilesTables');
     let toggleIcon = document.getElementById('toggleIcon');
-    if (tableContainer.style.display === 'none') {
-        tableContainer.style.display = 'block';
-        toggleIcon.textContent = '▲';
-    } else {
-        tableContainer.style.display = 'none';
+    let toggleText = document.getElementById('toggleText');
+    if (tablesDiv.style.display === 'none') {
+        tablesDiv.style.display = 'block';
         toggleIcon.textContent = '▼';
+        toggleText.textContent = 'Скрыть таблицу квантилей и децилей'; 
+    } else {
+        tablesDiv.style.display = 'none';
+        toggleIcon.textContent = '⯈';
+        toggleText.textContent = 'Показать таблицу квантилей и децилей'; 
     }
 }
+
+function populateTable(tableId, headerId, data) {
+    let tableHeader = document.getElementById(headerId);
+    let tableBody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = ''; 
+
+    if (data.length > 0) {
+        let headers = Object.keys(data[0]);
+        tableHeader.innerHTML = '';
+        headers.forEach(header => {
+            let th = document.createElement('th');
+            th.innerText = header;
+            th.style.textAlign = 'center';
+            tableHeader.appendChild(th);
+        });
+
+        data.forEach(rowData => {
+            let row = tableBody.insertRow();
+            headers.forEach(header => {
+                let cell = row.insertCell();
+                cell.innerText = rowData[header];
+                cell.style.textAlign = 'right';
+            });
+            row.cells[0].style.textAlign = 'center';
+        });
+    }
+}
+/**
+ * The function `toggleQuantilesTable` toggles the visibility of a table container
+ * and updates a toggle icon accordingly.
+ */
+// function toggleQuantilesTable() {
+//     let tableContainer = document.getElementById('QuantilesTableContainer');
+//     let toggleIcon = document.getElementById('toggleIcon');
+//     if (tableContainer.style.display === 'none') {
+//         tableContainer.style.display = 'block';
+//         toggleIcon.textContent = '▲';
+//     } else {
+//         tableContainer.style.display = 'none';
+//         toggleIcon.textContent = '▼';
+//     }
+// }
+
 
 document.querySelectorAll('.delete-button').forEach(button => {
     button.addEventListener('click', function() {

@@ -327,8 +327,12 @@ class ServiceConnector():
         if not table_data:
             raise EmptyTableError("Данные не получены. "
                 + "Попробуйте изменить параметры запроса")
-    
-        df = pd.DataFrame(table_data, columns=headers)
+
+        try:
+            df = pd.DataFrame(table_data, columns=headers)
+        except Exception:
+            raise EmptyTableError("Данные не получены. "
+                + "Попробуйте изменить параметры запроса")
         
         if df.shape[0] < 200:
             raise InsufficientRowsError("В таблице меньше 200 записей" 

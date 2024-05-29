@@ -40,12 +40,53 @@ class GithubDataConverter():
 
         transactions = pd.get_dummies(quantile_data, prefix='')
         
-        transactions = self.__delete_column_names(transactions)
+        transactions = self.__format_column_names(transactions)
+        
+        qurtile_table, decile_table = self.__split_to_quartiles_and_deciles(quantile_column_values)
         
         if return_quantiles:
-            return transactions, quantile_column_values
+            return transactions, qurtile_table, decile_table
         
         return transactions
+    
+    def __split_to_quartiles_and_deciles(self, quntile_table):
+        
+        def edit_for_user_view(df, column_name):
+            
+            # Сортировка строк в обратном порядке
+            quntile_table = df.iloc[::-1]
+
+            # Сброс индекса и начало отсчета с 1
+            quntile_table = quntile_table.reset_index(drop=True)
+            quntile_table.index = quntile_table.index + 1
+
+            # Удаление лишних строк
+            quntile_table = quntile_table.T.dropna().T
+            
+            
+            quntile_table = quntile_table.reset_index().rename(columns={'index': column_name})
+            
+            for column in quntile_table.columns:
+                quntile_table.rename(columns={column: column.replace('_', ' ')},
+                        inplace=True)
+            
+            for column in quntile_table:
+                quntile_table[column] = quntile_table[column].round(2)
+
+            return quntile_table
+        
+        # Разделение на 2 таблицы 
+        formatted_table = quntile_table.copy()
+        quartiles_mask = formatted_table.index.map(lambda x: str(x).endswith('5') 
+                                                   and not str(x).endswith('.5'))
+        quartiles = formatted_table[quartiles_mask].copy()
+        deciles = formatted_table[~quartiles_mask].copy()
+
+        # Редактирование вида таблиц
+        quartiles = edit_for_user_view(quartiles, column_name='№ Квартиля')
+        deciles = edit_for_user_view(deciles, '№ Дециля')
+        
+        return quartiles, deciles
     
     def __add_column_name_in_items(self, data):
         edited_column_names = data.copy()
@@ -61,7 +102,6 @@ class GithubDataConverter():
                 lambda x: 'Язык_' + x if x != 'None' else x)
                 
         if 'license_name' in edited_column_names.columns:
-            
             edited_column_names['license_name'] = edited_column_names['license_name'].apply(
                 lambda x: 'Лицензия_' + x if x != 'None' else x)
             
@@ -106,17 +146,6 @@ class GithubDataConverter():
         return pd.DataFrame(quantiles_by_column)
     
     def _clean_data(self, repo_data: pd.DataFrame):
-        """
-        Метод для очистки данных репозиториев.
-
-        Параметры:
-        :param repo_data: Данные репозиториев.
-        :type repo_data: pandas.DataFrame
-
-        Возвращает:
-        :return: Очищенные данные.
-        :rtype: pandas.DataFrame
-        """
         clean_data = repo_data.drop_duplicates()
         for column in clean_data.columns:
             if not column in self.data_configuration["columnName"].values:
@@ -124,7 +153,7 @@ class GithubDataConverter():
        
         return clean_data
     
-    def __delete_column_names(self, transaction_data):
+    def __format_column_names(self, transaction_data):
         def edit_column_names(string):
             string = string.replace('_', '', 1)  # Удаление только первых символов '_'
             string = string.replace('_', ' ')  # Замена всех остальных символов '_' на пробел
@@ -137,7 +166,8 @@ class GithubDataConverter():
             rename_columns_data.rename(
                 columns={column: edit_column_names(column)},
                 inplace=True)
-            
+        
+        # Так как в данных не может быть лицензии и языка
         while 'None' in rename_columns_data.columns:
             rename_columns_data.drop(columns='None', inplace=True)
             

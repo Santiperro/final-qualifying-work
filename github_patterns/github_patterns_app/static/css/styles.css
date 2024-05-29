@@ -16,16 +16,16 @@ header {
 }
 
 nav {
-    position: fixed; /* Закрепляет навигацию сверху */
-    top: 0; /* Устанавливает навигацию в верхней части страницы */
-    width: 100%; /* Устанавливает ширину навигации на 100% ширины экрана */
+    position: fixed; 
+    top: 0; 
+    width: 100%;
     height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center; 
     padding: 0 500px;
-    background-color: lightgray; /* Добавляет фон, чтобы навигация была видна поверх другого контента */
-    z-index: 1; /* Устанавливает навигацию поверх другого контента */
+    background-color: lightgray; 
+    z-index: 1;
 }
 
 nav ul {
@@ -54,20 +54,27 @@ nav a:hover {
     justify-content: center;
     align-items: center;
     color: black;
-    padding-top: 150px; /* Отступ сверху */
+    padding-top: 150px; 
 }
+
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
 }
+
+.container h4 {
+    margin-top: 20px;
+}
+
 .input-group {
     display: flex;
     justify-content: space-between;
     width: 400px;
     position: relative;
 }
+
 .errorDiv {
     width: 400px;
     padding: 10px;
@@ -78,6 +85,7 @@ nav a:hover {
     text-align: center;
     display: none;
 }
+
 .notification {
     width: 400px;
     padding: 10px;
@@ -88,30 +96,37 @@ nav a:hover {
     text-align: center;
     display: none;
 }
+
 .input-group input[type="date"].error {
-    border: 2px solid rgb(224, 0, 0); /* Увеличиваем толщину границы */
-    outline: none; /* Убираем стандартное выделение браузера */
+    border: 2px solid rgb(224, 0, 0); 
+    outline: none;
 }
+
 .input-group input[type="number"] {
     width: 50px;
 }
+
 .input-group input[type="number"].error {
-    border: 2px solid red; /* Увеличиваем толщину границы */
-    outline: none; /* Убираем стандартное выделение браузера */
+    border: 2px solid red;
+    outline: none; 
 }
+
 .input-group input[type="number"]::-webkit-inner-spin-button,
 .input-group input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 .input-group input[type="radio"] {
     width: auto;
 }
+
 .input-group input[type="text"] {
     width: 200px;
 }
+
 .radio-group {
-    margin-top: -10px; /* Измените это значение, чтобы управлять расстоянием между элементами */
+    margin-top: -10px; 
 } 
 
 /* Table */
@@ -164,8 +179,8 @@ nav a:hover {
 .switch {
     position: relative;
     display: inline-block;
-    width: 40px; /* Уменьшенный размер */
-    height: 22px; /* Уменьшенный размер */
+    width: 40px; 
+    height: 22px;
 }
 
 .switch input {
@@ -188,16 +203,16 @@ nav a:hover {
 .slider:before {
     position: absolute;
     content: "";
-    height: 18px; /* Уменьшенный размер */
-    width: 18px; /* Уменьшенный размер */
-    left: 2px; /* Уменьшенный размер */
-    bottom: 2px; /* Уменьшенный размер */
+    height: 18px;
+    width: 18px;
+    left: 2px; 
+    bottom: 2px;
     background-color: white;
     transition: .4s;
 }
 
 input:checked + .slider:before {
-    transform: translateX(18px); /* Уменьшенный размер */
+    transform: translateX(18px);
 }
 
 input:checked + .slider {
@@ -213,19 +228,18 @@ input:checked + .slider {
 }
 
 #getGithubDataButton {
-    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
-    font-size: 16px; /* Размер шрифта */
-    border: 2px solid #333; /* Граница вокруг кнопки */
-    background-color: #f8f8f8; /* Цвет фона кнопки */
-    color: #333; /* Цвет текста кнопки */
-    cursor: pointer; /* Изменение курсора при наведении */
-    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+    padding: 5px 20px;
+    font-size: 16px; 
+    border: 2px solid #333; 
+    background-color: #f8f8f8;
+    color: #333; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
 }
 
 #getGithubDataButton:hover {
-    background-color: #ddd; /* Цвет фона кнопки при наведении */
+    background-color: #ddd; 
 }
-
 
 /* find_patterns page */
 
@@ -234,7 +248,7 @@ input:checked + .slider {
     justify-content: center;
     align-items: center;
     color: black;
-    padding-top: 150px; /* Отступ сверху */
+    padding-top: 150px; 
 }
 
 /* Samples Table */
@@ -278,40 +292,40 @@ input:checked + .slider {
 }
 
 .new-sample-button {
-    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
-    font-size: 16px; /* Размер шрифта */
-    border: 2px solid #333; /* Граница вокруг кнопки */
-    background-color: #f8f8f8; /* Цвет фона кнопки */
-    color: #333; /* Цвет текста кнопки */
-    cursor: pointer; /* Изменение курсора при наведении */
-    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+    padding: 5px 20px; 
+    font-size: 16px; 
+    border: 2px solid #333;
+    background-color: #f8f8f8; 
+    color: #333; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
 }
 
 #findPatternsButton {
-    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
-    font-size: 16px; /* Размер шрифта */
-    border: 2px solid #333; /* Граница вокруг кнопки */
-    background-color: #f8f8f8; /* Цвет фона кнопки */
-    color: #333; /* Цвет текста кнопки */
-    cursor: pointer; /* Изменение курсора при наведении */
-    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+    padding: 5px 20px; 
+    font-size: 16px; 
+    border: 2px solid #333; 
+    background-color: #f8f8f8; 
+    color: #333; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
 }
 
 #findPatternsButton:hover {
-    background-color: #ddd; /* Цвет фона кнопки при наведении */
+    background-color: #ddd;
 }
 
-/* Стили для кнопки удаления */
+/* delete button */
 .delete-button {
     background: none;
     border: none;
     cursor: pointer;
     font-size: 16px;
-    color: black; /* Устанавливаем черный цвет для креста */
+    color: black;
 }
 
 .delete-button:hover {
-    color: red; /* Цвет креста при наведении */
+    color: red; 
 }
 
 #TableContainer {
@@ -324,7 +338,7 @@ input:checked + .slider {
     max-height: 500px;
     overflow-y: auto;
     display: table;
-    width: 100%; /* Устанавливаем ширину таблицы */
+    width: 100%; 
     border-collapse: collapse;
 }
 
@@ -332,8 +346,8 @@ input:checked + .slider {
     text-align: center;
     padding: 8px;
     border: 1px solid #ddd;
-    position: relative; /* Делаем ячейки таблицы относительно позиционированными */
-    top: -1px; /* Добавляем отрицательный отступ сверху */
+    position: relative; 
+    top: -1px; 
 }
 
 #PatternsTable::-webkit-scrollbar {
@@ -347,7 +361,7 @@ input:checked + .slider {
 
 #PatternsTable td:first-child,
 #PatternsTable td:nth-child(2) {
-    text-align: left; /* Выравниваем текст по левому краю для первых двух столбцов */
+    text-align: left; 
 }
 
 #PatternsTable::-webkit-scrollbar-thumb {
@@ -377,23 +391,6 @@ input:checked + .slider {
     top: -1px;
 }
 
-#QuantilesTableContainer {
-    max-height: 400px;
-    overflow-y: auto; /* Добавляет прокрутку, если таблица слишком большая */
-}
-
-#QuantilesTableContainer table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#QuantilesTableContainer th,
-#QuantilesTableContainer td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: right; /* Выравнивание чисел по правому краю */
-}
-
 .header-content {
     display: flex;
     align-items: center;
@@ -404,7 +401,7 @@ input:checked + .slider {
 .header-content input[type="text"] {
     margin-left: 10px;
     padding: 4px;
-    width: 50%; /* Устанавливаем ширину фильтра */
+    width: 50%; 
     box-sizing: border-box;
 }
 
@@ -442,7 +439,7 @@ input:checked + .slider {
 }
 
 #download:hover {
-    background-color: #ddd; /* Цвет фона кнопки при наведении */
+    background-color: #ddd;
 }
 
 #filterAntecedent,
@@ -450,15 +447,78 @@ input:checked + .slider {
     display: block;
     margin: 10px 0;
     padding: 5px;
-    width: calc(50% - 10px); /* Устанавливаем ширину фильтров */
+    width: calc(50% - 10px); 
 }
 
 #download {
-    padding: 5px 20px; /* Внутренние отступы увеличиваются в зависимости от длины текста */
-    font-size: 16px; /* Размер шрифта */
-    border: 2px solid #333; /* Граница вокруг кнопки */
-    background-color: #f8f8f8; /* Цвет фона кнопки */
-    color: #333; /* Цвет текста кнопки */
-    cursor: pointer; /* Изменение курсора при наведении */
-    transition: background-color 0.3s ease; /* Плавное изменение фона при наведении */
+    padding: 5px 20px;
+    font-size: 16px; 
+    border: 2px solid #333;
+    background-color: #f8f8f8; 
+    color: #333;
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+}
+
+#QuantilesTableContainer {
+    display: block;
+    overflow: auto;
+}
+
+#toggleQuantilesBtn {
+    display: block;
+    margin: 0 auto;
+    padding: 10px;
+    cursor: pointer; 
+    background: none;
+}
+
+#QuantilesTables {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    text-align: center;
+}
+
+#QuartilesTableContainer, #DecilesTableContainer {
+    display: inline-block;
+    margin: 0 10px;
+    min-width: 300px;
+    vertical-align: top; 
+}
+
+#QuantilesTableContainer table {
+    width: auto;
+    white-space: nowrap;
+}
+#QuantilesTableContainer table th, #QuantilesTableContainer table td:first-child {
+    text-align: center;
+}
+
+#QuantilesTableContainer table td {
+    text-align: right;
+}
+
+#QuantilesTableContainer th,
+#QuantilesTableContainer td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: right; 
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+#buttonContainer button {
+    padding: 5px 20px;
+    font-size: 16px; 
+    border: 2px solid #333;
+    background-color: #f8f8f8; 
+    color: #333;
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    margin: 0 10px; /* Добавлено для создания расстояния между кнопками */
 }

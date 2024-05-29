@@ -9,10 +9,10 @@
             <thead>
                 <tr>
                     <th>Заметка</th>
-                    <th>Время создания</th>
-                    <th>Кол-во</th>
+                    <th>Время загрузки</th>
+                    <th>Число реп-ев</th>
                     <th>Мин. участников</th>
-                    <th>Мин звезд</th>
+                    <th>Мин. звезд</th>
                     <th>Период</th>
                     <th>Использовать выборку</th>
                     <th>Удалить</th>
@@ -65,22 +65,7 @@
         </div>
         <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
         <div id="errorDiv" class="errorDiv"></div>
-        <button id="toggleQuantilesTable" onclick="toggleQuantilesTable()">
-            Показать таблицу квартилей/децилей
-            <span id="toggleIcon" style="display: inline-block;">▼</span>
-        </button>
-        <div id="QuantilesTableContainer" style="display: none;">
-            <table id="QuantilesTable">
-                <thead>
-                    <tr>
-                        <th>Квартиль</th>
-                        <th>Значение</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+        <h4 id="TableContainerName" style="display: none;"></h4>
         <div id="TableContainer" style="display: none;">
             <table id="PatternsTable">
                 <thead>
@@ -139,8 +124,36 @@
                 </tbody>
             </table>
         </div>
-        <button id="download" style="display: none;">Скачать шаблоны</button>
-        <div id="spacer" style="height: 50px;"></div>
+        <div id="buttonContainer">
+            <button id="download" style="display: none;">Скачать шаблоны</button>
+            <button id="toggleQuantilesBtn" onclick="toggleQuantiles()" style="display: none;">
+                <span id="toggleIcon">⯈</span>
+                <span id="toggleText">Показать таблицу квантилей и децилей</span>
+            </button>
+        </div>
+        <div id="QuantilesTableContainer" style="display: none;">
+            <div id="QuantilesTables" style="display: none;">
+                <div id="QuartilesTableContainer">
+                    <table id="QuartilesTable">
+                        <thead>
+                            <tr id="QuartilesTableHeader"></tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="DecilesTableContainer">
+                    <table id="DecilesTable">
+                        <thead>
+                            <tr id="DecilesTableHeader"></tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="spacer" style="height: 20px;"></div>
     </div>
 </div>
 {% endblock %}
