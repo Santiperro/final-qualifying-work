@@ -5,6 +5,7 @@ from dateutil import relativedelta
 import time
 import aiohttp
 import asyncio
+import environ
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -31,8 +32,10 @@ class ServiceConnector():
                   "bool": bool}
     
     def __init__(self):
-        # self.token = getpass.getpass('Введите ваш GitHub токен: ')
-        self.github_api_token = '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'
+        env = environ.Env()
+        environ.Env.read_env()
+        self.github_api_token =  env('GITHUB_KEY')
+        
         self.headers = {'Authorization': f'token {self.github_api_token}'}
         self.data_configuration = pd.read_json(r"dtype_conf.json")
             
@@ -290,7 +293,12 @@ class ServiceConnector():
         return df
 
     def __get_clickhouse_data(self, query, delay=30):
-        driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("--window-size=1920x1080")
+        options.add_argument("--disable-gpu")
+
+        driver = webdriver.Chrome(options=options)
         driver.get(self.CLICKHOUSE_REQUEST_URL)
 
         query_input = driver.find_element(By.ID, 'query')

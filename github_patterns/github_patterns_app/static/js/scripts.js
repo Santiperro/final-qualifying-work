@@ -7,11 +7,6 @@ window.onload = function() {
     document.getElementById('endDate').max = today;
     document.getElementById('startDate').value = today;
     document.getElementById('endDate').value = today;
-    validateDates('startDate');
-    validateDates('endDate');
-    validateNumbers('minParticipants');
-    validateNumbers('minStars');
-    validateNumbers('numRepos');
 }
 
 function validateDates(changedInputId) {
@@ -49,7 +44,7 @@ function isValidDate(dateString) {
     return !isNaN(date.getTime());
 }
 
-function validateNumbers(inputId) {
+function validateNumbers(inputId, isFloat) {
     let input = document.getElementById(inputId);
     let inputValue = Number(input.value);
     let min = Number(input.min);
@@ -65,6 +60,10 @@ function validateNumbers(inputId) {
         } else if (inputValue < min || inputValue > max) {
             input.classList.add('error');
             errorDiv.textContent = `${label} должно быть в промежутке от ${min} до ${max}. Текущее значение: ${inputValue}`;
+            errorDiv.style.display = 'block';
+        } else if (!isFloat && !Number.isInteger(inputValue)) {
+            input.classList.add('error');
+            errorDiv.textContent = `${label} должно быть целым числом. Текущее значение: ${inputValue}`;
             errorDiv.style.display = 'block';
         } else {
             input.classList.remove('error');
@@ -86,14 +85,18 @@ function toggleDivisionType(element, name) {
 }
 
 function load_data_submit() {
+    let errorDiv = document.getElementById('errorDiv');
+    errorDiv.style.display = 'none';
     validateDates('startDate');
     validateDates('endDate');
-    validateNumbers('minParticipants');
-    validateNumbers('minStars');
-    validateNumbers('numRepos');
+    validateNumbers('minParticipants', false);
+    validateNumbers('minStars', false);
+    validateNumbers('numRepos', false);
+
     let errorElements = document.querySelectorAll('.error');
     if (errorElements.length > 0) {
         console.log(errorElements)
+        errorDiv.style.display = 'block';
         return;
     }
     var selections = {};
@@ -127,7 +130,6 @@ function load_data_submit() {
         note: document.querySelector('input[type="text"]').value
     };
 
-    let errorDiv = document.getElementById('errorDiv');
     let notification = document.getElementById('notification');
 
     if (Object.keys(selections).length < 3) {
@@ -152,7 +154,6 @@ function load_data_submit() {
         return response.json();
     })
     .then((data) => {
-        console.log('Success:', data);
         notification.textContent = "Данные успешно сохранены";
         notification.style.display = 'block';
         
@@ -195,6 +196,9 @@ function getPatternWordEnding(number) {
 }
 
 function find_patterns_submit() {
+    let errorDiv = document.getElementById('errorDiv');
+    errorDiv.style.display = 'none';
+
     document.getElementById('filterAntecedent').style.display = 'none';
     document.getElementById('filterConsequent').style.display = 'none';
     document.getElementById('TableContainer').style.display = 'none';
@@ -202,17 +206,35 @@ function find_patterns_submit() {
     document.getElementById('QuantilesTableContainer').style.display = 'none';
     document.getElementById('toggleQuantilesBtn').style.display = 'none';
     document.getElementById('TableContainerName').style.display = 'none';
-    let errorDiv = document.getElementById('errorDiv');
-    errorDiv.style.display = 'none';
 
-    validateNumbers('antecedent');
-    validateNumbers('consequent');
-    validateNumbers('minsup');
-    validateNumbers('minconf');
-    validateNumbers('lift');
+    validateNumbers('antecedent', false);
+    validateNumbers('antecedent_max', false);
+    validateNumbers('consequent', false);
+    validateNumbers('consequent_max', false);
+    validateNumbers('minsup', true);
+    validateNumbers('minconf', true);
+    validateNumbers('lift', true);
+
+    if (Number(document.getElementById('antecedent').value) > Number(document.getElementById('antecedent_max').value)) {
+        errorDiv.textContent = 'Минимальное значение не может быть больше максимального';
+        errorDiv.style.display = 'block';
+        document.getElementById('antecedent').classList.add('error')
+        return;
+    }
+    document.getElementById('antecedent').classList.remove('error')
+
+    if (document.getElementById('consequent').value > Number(document.getElementById('consequent_max').value)) {
+        errorDiv.textContent = 'Минимальное значение не может быть больше максимального';
+        errorDiv.style.display = 'block';
+        document.getElementById('consequent').classList.add('error')
+        return;
+    }
+    document.getElementById('consequent').classList.remove('error')
+
     let errorElements = document.querySelectorAll('.error');
     if (errorElements.length > 0) {
         console.log(errorElements);
+        errorDiv.style.display = 'block';
         return; 
     }
 
@@ -225,12 +247,16 @@ function find_patterns_submit() {
 
     let antecedent = document.getElementById('antecedent').value;
     let consequent = document.getElementById('consequent').value;
+    let antecedent_max = document.getElementById('antecedent_max').value;
+    let consequent_max = document.getElementById('consequent_max').value;
     let minsup = document.getElementById('minsup').value;
     let minconf = document.getElementById('minconf').value;
     let lift = document.getElementById('lift').value;
     let data = {
         antecedent: antecedent,
         consequent: consequent,
+        antecedent_max: antecedent_max,
+        consequent_max: consequent_max,
         minsup: minsup,
         minconf: minconf,
         lift: lift,
@@ -300,11 +326,11 @@ function toggleQuantiles() {
     if (tablesDiv.style.display === 'none') {
         tablesDiv.style.display = 'block';
         toggleIcon.textContent = '▼';
-        toggleText.textContent = 'Скрыть таблицу квантилей и децилей'; 
+        toggleText.textContent = 'Скрыть таблицу квартилей и децилей'; 
     } else {
         tablesDiv.style.display = 'none';
         toggleIcon.textContent = '⯈';
-        toggleText.textContent = 'Показать таблицу квантилей и децилей'; 
+        toggleText.textContent = 'Показать таблицу квартилей и децилей'; 
     }
 }
 
@@ -334,22 +360,6 @@ function populateTable(tableId, headerId, data) {
         });
     }
 }
-/**
- * The function `toggleQuantilesTable` toggles the visibility of a table container
- * and updates a toggle icon accordingly.
- */
-// function toggleQuantilesTable() {
-//     let tableContainer = document.getElementById('QuantilesTableContainer');
-//     let toggleIcon = document.getElementById('toggleIcon');
-//     if (tableContainer.style.display === 'none') {
-//         tableContainer.style.display = 'block';
-//         toggleIcon.textContent = '▲';
-//     } else {
-//         tableContainer.style.display = 'none';
-//         toggleIcon.textContent = '▼';
-//     }
-// }
-
 
 document.querySelectorAll('.delete-button').forEach(button => {
     button.addEventListener('click', function() {
@@ -384,20 +394,40 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('PatternsTable').style.display = 'table';
 });
 
-function filterTable(filterId, colIndex) {
-    const input = document.getElementById(filterId);
-    const filter = input.value.toLowerCase();
+function filterTable() {
+    const filters = [
+        document.getElementById('filterAntecedent').value.toLowerCase(),
+        document.getElementById('filterConsequent').value.toLowerCase()
+    ];
+
     const table = document.getElementById('PatternsTable');
     const tr = table.getElementsByTagName('tr');
 
     for (let i = 1; i < tr.length; i++) {
-        const td = tr[i].getElementsByTagName('td')[colIndex];
-        if (td) {
-            const txtValue = td.textContent || td.innerText;
-            tr[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+        let isVisible = true;
+        for (let j = 0; j < filters.length; j++) {
+            const td = tr[i].getElementsByTagName('td')[j];
+            if (td) {
+                let filter = filters[j];
+                const isNegativeFilter = filter.startsWith('~');
+                if (isNegativeFilter) {
+                    filter = filter.slice(1);  // Удалить символ '~'
+                }
+
+                const txtValue = td.textContent || td.innerText;
+                const isMatch = txtValue.toLowerCase().indexOf(filter) > -1;
+                if ((isNegativeFilter && isMatch) || (!isNegativeFilter && !isMatch)) {
+                    isVisible = false;
+                    break;
+                }
+            }
         }
+        tr[i].style.display = isVisible ? '' : 'none';
     }
 }
+
+document.getElementById('filterAntecedent').addEventListener('keyup', filterTable);
+document.getElementById('filterConsequent').addEventListener('keyup', filterTable);
 
 function sortTable(colIndex, ascending) {
     const table = document.getElementById('PatternsTable');

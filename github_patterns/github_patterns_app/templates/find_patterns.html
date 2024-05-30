@@ -26,7 +26,7 @@
                     <td>{{ sample.repos_count }}</td>
                     <td>{{ sample.min_members_count }}</td>
                     <td>{{ sample.min_watch_count }}</td>
-                    <td>{{ sample.end_date|date:"Y-m-d" }} - {{ sample.start_date|date:"Y-m-d" }}</td>
+                    <td>{{ sample.start_date|date:"Y-m-d" }} - {{ sample.end_date|date:"Y-m-d" }}</td>
                     <td>
                         <label class="switch">
                             <input type="checkbox" onclick="toggleSelection(this, '{{ sample.id }}')">
@@ -48,20 +48,28 @@
             <input type="number" id="antecedent" min="1" max="10" value="1" onchange="validateNumbers('antecedent')" />
         </div>
         <div class="input-group">
+            <label for="antecedent_max">Максимально элементов антецедента:</label>
+            <input type="number" id="antecedent_max" min="1" max="10" value="3" onchange="validateNumbers('antecedent-max')" />
+        </div>
+        <div class="input-group">
             <label for="consequent">Минимально элементов консеквента:</label>
             <input type="number" id="consequent" min="1" max="10" value="1" onchange="validateNumbers('consequent')" />
         </div>
         <div class="input-group">
+            <label for="consequent_max">Максимально элементов консеквента:</label>
+            <input type="number" id="consequent_max" min="1" max="10" value="3" onchange="validateNumbers('consequent-max')" />
+        </div>
+        <div class="input-group">
             <label for="minsup">Минимальная поддержка:</label>
-            <input type="number" id="minsup" min="0.001" max="1" value="0.1" onchange="validateNumbers('minsup')" />
+            <input type="number" id="minsup" min="0.001" max="1" value="0.1" onchange="validateNumbers('minsup', true)" />
         </div>
         <div class="input-group">
             <label for="minconf">Минимальная достоверность:</label>
-            <input type="number" id="minconf" min="0.001" max="1" value="0.1" onchange="validateNumbers('minconf')" />
+            <input type="number" id="minconf" min="0.001" max="1" value="0.1" onchange="validateNumbers('minconf', true)" />
         </div>
         <div class="input-group">
             <label for="lift">Минимальный подъем:</label>
-            <input type="number" id="lift" min="-100" max="100" value="1" onchange="validateNumbers('lift')" />
+            <input type="number" id="lift" min="-100" max="100" value="1" onchange="validateNumbers('lift', true)" />
         </div>
         <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
         <div id="errorDiv" class="errorDiv"></div>
@@ -73,13 +81,13 @@
                         <th>
                             <div class="header-content">
                                 <span>Антецедент</span>
-                                <input type="text" id="filterAntecedent" placeholder="Фильтр" onkeyup="filterTable('filterAntecedent', 0)">
+                                <input type="text" id="filterAntecedent" placeholder="Фильтр">
                             </div>
                         </th>
                         <th>
                             <div class="header-content">
                                 <span>Консеквент</span>
-                                <input type="text" id="filterConsequent" placeholder="Фильтр" onkeyup="filterTable('filterConsequent', 1)">
+                                <input type="text" id="filterConsequent" placeholder="Фильтр">
                             </div>
                         </th>
                         <th>
@@ -128,7 +136,7 @@
             <button id="download" style="display: none;">Скачать шаблоны</button>
             <button id="toggleQuantilesBtn" onclick="toggleQuantiles()" style="display: none;">
                 <span id="toggleIcon">⯈</span>
-                <span id="toggleText">Показать таблицу квантилей и децилей</span>
+                <span id="toggleText">Показать таблицу квартилей и децилей</span>
             </button>
         </div>
         <div id="QuantilesTableContainer" style="display: none;">

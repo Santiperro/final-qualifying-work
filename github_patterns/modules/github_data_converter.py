@@ -28,8 +28,8 @@ class GithubDataConverter():
         'license_name': 'None',
         'is_deleted_or_private': 'None'}
         """
-        cleaned_data = self._clean_data(repos_data)
-        
+        cleaned_data = self._clean_data(repos_data, quantile_config)
+
         quantile_column_values = self.__find_quantiles(cleaned_data, 
                                                 quantile_config)
 
@@ -42,17 +42,19 @@ class GithubDataConverter():
         
         transactions = self.__format_column_names(transactions)
         
-        qurtile_table, decile_table = self.__split_to_quartiles_and_deciles(quantile_column_values)
+        qurtile_table, decile_table = self.__split_to_quartiles_and_deciles(quantile_column_values, quantile_config)
         
         if return_quantiles:
             return transactions, qurtile_table, decile_table
         
         return transactions
     
-    def __split_to_quartiles_and_deciles(self, quntile_table):
+    def __split_to_quartiles_and_deciles(self, quantile_table, quantile_config):
         
         def edit_for_user_view(df, column_name):
             
+            if df.empty:
+                return
             # Сортировка строк в обратном порядке
             quntile_table = df.iloc[::-1]
 
@@ -76,11 +78,14 @@ class GithubDataConverter():
             return quntile_table
         
         # Разделение на 2 таблицы 
-        formatted_table = quntile_table.copy()
-        quartiles_mask = formatted_table.index.map(lambda x: str(x).endswith('5') 
-                                                   and not str(x).endswith('.5'))
-        quartiles = formatted_table[quartiles_mask].copy()
-        deciles = formatted_table[~quartiles_mask].copy()
+        print(quantile_table)
+        formatted_table = quantile_table.copy()
+        print(quantile_config)
+        quartiles = formatted_table[[column for column in formatted_table.columns if quantile_config.get(column) == 'qua']].dropna()
+        deciles = quantile_table[[column for column in quantile_table.columns if quantile_config.get(column) == 'dec']].dropna()
+
+        print(quartiles)
+        print(deciles)
 
         # Редактирование вида таблиц
         quartiles = edit_for_user_view(quartiles, column_name='№ Квартиля')
@@ -99,11 +104,11 @@ class GithubDataConverter():
                 
         if 'language' in edited_column_names.columns:
             edited_column_names['language'] = edited_column_names['language'].apply(
-                lambda x: 'Язык_' + x if x != 'None' else x)
+                lambda x: 'Язык_' + x if x != 'None' and x != None else x)
                 
         if 'license_name' in edited_column_names.columns:
             edited_column_names['license_name'] = edited_column_names['license_name'].apply(
-                lambda x: 'Лицензия_' + x if x != 'None' else x)
+                lambda x: 'Лицензия_' + x if x != 'None' and x != None else x)
             
             edited_column_names['license_name'] = edited_column_names['license_name'].replace([None, 'None'], 'No license')
             
@@ -145,12 +150,16 @@ class GithubDataConverter():
                 
         return pd.DataFrame(quantiles_by_column)
     
-    def _clean_data(self, repo_data: pd.DataFrame):
+    def _clean_data(self, repo_data, quantile_config):
         clean_data = repo_data.drop_duplicates()
         for column in clean_data.columns:
-            if not column in self.data_configuration["columnName"].values:
+            if (not column in self.data_configuration["columnName"].values 
+                or not column in quantile_config 
+                or clean_data[column].isnull().all() 
+                or (clean_data[column] == 'None').all() 
+                or (clean_data[column] == 0).all()):
+                
                 clean_data.drop(column, axis=1, inplace=True)
-       
         return clean_data
     
     def __format_column_names(self, transaction_data):

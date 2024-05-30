@@ -32,7 +32,6 @@ def request_data(request):
 def load_data_submit(request):
     if request.method == 'POST':
         request_params = json.loads(request.body)
-        print(request_params)
         
         current_transaction_items_names = []
         items_decode_name_name_dict = get_items_decode_name_name_dict()
@@ -66,8 +65,6 @@ def load_data_submit(request):
                 'status': status_value,
                 'division': division_value
             }
-        
-        print(attribute_info)
         
         sample_params = SampleParams(
             save_time=datetime.now(),
@@ -156,19 +153,25 @@ def find_patterns_submit(request):
                                                                           quantile_config,
                                                                           return_quantiles=True)
         pattern_miner = PatternMiner()
-        github_patterns = pattern_miner.mine_patterns(transactions, 
-                                                    min_supp=float(data['minsup']),
-                                                    min_conf=float(data['minconf']),
-                                                    min_lift=float(data['lift']),
-                                                    min_left_elements=int(data['antecedent']),
-                                                    min_right_elements=int(data['consequent']))
+        try:
+            github_patterns = pattern_miner.mine_patterns(transactions, 
+                                                        min_supp=float(data['minsup']),
+                                                        min_conf=float(data['minconf']),
+                                                        min_lift=float(data['lift']),
+                                                        min_left_elements=int(data['antecedent']),
+                                                        min_right_elements=int(data['consequent']), 
+                                                        max_left_elements=int(data['antecedent_max']),
+                                                        max_right_elements=int(data['consequent_max']))
+        except NoPatternsException as e:
+            return JsonResponse({'Error': str(e)}, status=400)
+        
         if github_patterns.empty:
-                return JsonResponse({'Error': 'Шаблоны не найдены. Попробуйте изменить параметры'}, status=400)
+            return JsonResponse({'Error': 'Шаблоны не найдены. Попробуйте изменить параметры'}, status=400)
         else:
             response_data = {
                 'patterns': github_patterns.to_dict(orient='records'),
-                'quartiles': quartiles.to_dict(orient='records'),
-                'deciles': deciles.to_dict(orient='records')
+                'quartiles': quartiles.to_dict(orient='records') if quartiles is not None else [],
+                'deciles': deciles.to_dict(orient='records') if deciles is not None else []
             }
             return JsonResponse(response_data, safe=False)
         
@@ -188,47 +191,44 @@ def get_github_repository_data(sample_ids):
     
         if not attribute_dict:
             attribute_dict = {
-                'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else None,
-                'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else None,
-                'pull_requests': sample.pull_requests_division.lower() if sample.pull_requests_status == 'ON' else None,
-                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_division.lower() if sample.merged_pull_requests_ratio_status == 'ON' else None,
-                'issues': sample.issues_division.lower() if sample.issues_status == 'ON' else None,
-                'closed_issues_ratio': sample.closed_issues_ratio_division.lower() if sample.closed_issues_ratio_status == 'ON' else None,
-                'watches': sample.watches_division.lower() if sample.watches_status == 'ON' else None,
-                'forks': sample.forks_division.lower() if sample.forks_status == 'ON' else None,
-                'new_members': sample.new_members_division.lower() if sample.new_members_status == 'ON' else None,
-                'language': 'None' if sample.language_status == 'ON' else None,
-                'license_name': 'None' if sample.license_name_status == 'ON' else None,
-                'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else None
+                'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else "OFF",
+                'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else "OFF",
+                'pull_requests': sample.pull_requests_division.lower() if sample.pull_requests_status == 'ON' else "OFF",
+                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_division.lower() if sample.merged_pull_requests_ratio_status == 'ON' else "OFF",
+                'issues': sample.issues_division.lower() if sample.issues_status == 'ON' else "OFF",
+                'closed_issues_ratio': sample.closed_issues_ratio_division.lower() if sample.closed_issues_ratio_status == 'ON' else "OFF",
+                'watches': sample.watches_division.lower() if sample.watches_status == 'ON' else "OFF",
+                'forks': sample.forks_division.lower() if sample.forks_status == 'ON' else "OFF",
+                'new_members': sample.new_members_division.lower() if sample.new_members_status == 'ON' else "OFF",
+                'language': 'None' if sample.language_status == 'ON' else "OFF",
+                'license_name': 'None' if sample.license_name_status == 'ON' else "OFF",
+                'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else "OFF"
             }
+            attribute_dict = {k: v for k, v in attribute_dict.items() if v is not "OFF"}
         else:
             current_attribute_dict = {
-                'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else None,
-                'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else None,
-                'pull_requests': sample.pull_requests_division.lower() if sample.pull_requests_status == 'ON' else None,
-                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_division.lower() if sample.merged_pull_requests_ratio_status == 'ON' else None,
-                'issues': sample.issues_division.lower() if sample.issues_status == 'ON' else None,
-                'closed_issues_ratio': sample.closed_issues_ratio_division.lower() if sample.closed_issues_ratio_status == 'ON' else None,
-                'watches': sample.watches_division.lower() if sample.watches_status == 'ON' else None,
-                'forks': sample.forks_division.lower() if sample.forks_status == 'ON' else None,
-                'new_members': sample.new_members_division.lower() if sample.new_members_status == 'ON' else None,
-                'language': 'None' if sample.language_status == 'ON' else None,
-                'license_name': 'None' if sample.license_name_status == 'ON' else None,
-                'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else None
+                'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else "OFF",
+                'avg_push_size': sample.avg_push_size_division.lower() if sample.avg_push_size_status == 'ON' else "OFF",
+                'pull_requests': sample.pull_requests_division.lower() if sample.pull_requests_status == 'ON' else "OFF",
+                'merged_pull_requests_ratio': sample.merged_pull_requests_ratio_division.lower() if sample.merged_pull_requests_ratio_status == 'ON' else "OFF",
+                'issues': sample.issues_division.lower() if sample.issues_status == 'ON' else "OFF",
+                'closed_issues_ratio': sample.closed_issues_ratio_division.lower() if sample.closed_issues_ratio_status == 'ON' else "OFF",
+                'watches': sample.watches_division.lower() if sample.watches_status == 'ON' else "OFF",
+                'forks': sample.forks_division.lower() if sample.forks_status == 'ON' else "OFF",
+                'new_members': sample.new_members_division.lower() if sample.new_members_status == 'ON' else "OFF",
+                'language': 'None' if sample.language_status == 'ON' else "OFF",
+                'license_name': 'None' if sample.license_name_status == 'ON' else "OFF",
+                'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else "OFF"
             }
+            current_attribute_dict = {k: v for k, v in current_attribute_dict.items() if v is not "OFF"}
             if attribute_dict != current_attribute_dict:
                 raise ValueError("Параметры состава транзакций выборок не совпадают")
-    
-    print(attribute_dict)
-    
-    attribute_dict = {key: value for key, value in attribute_dict.items() if value != 'None'}
     
     if df.empty:
         raise EmptyTableError("Данные не получены. Перезагрузите страницу, и выберите заново")
         
     return df, attribute_dict
             
-        
         
 def get_items_name_dtype_dict():
     items_data_type_dict = {}
@@ -244,11 +244,3 @@ def get_items_decode_name_name_dict():
                                  TRANSACTION_ITEMS_NAMES):
         items_decode_name_name_dict[decode_name] = name
     return items_decode_name_name_dict
-
-# def get_items_name_decode_name_dict():
-#     items_name_decode_name_dict = {}
-#     for name, decode_name  in zip(TRANSACTION_ITEMS_NAMES, 
-#                                  transaction_items_decode_names):
-#         items_name_decode_name_dict[name] = decode_name
-#     return items_name_decode_name_dict
-
