@@ -204,7 +204,7 @@ def get_github_repository_data(sample_ids):
                 'license_name': 'None' if sample.license_name_status == 'ON' else "OFF",
                 'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else "OFF"
             }
-            attribute_dict = {k: v for k, v in attribute_dict.items() if v is not "OFF"}
+            attribute_dict = {k: v for k, v in attribute_dict.items() if v != "OFF"}
         else:
             current_attribute_dict = {
                 'pushes': sample.pushes_duration_division.lower() if sample.pushes_duration_status == 'ON' else "OFF",
@@ -220,7 +220,7 @@ def get_github_repository_data(sample_ids):
                 'license_name': 'None' if sample.license_name_status == 'ON' else "OFF",
                 'is_deleted_or_private': 'None' if sample.is_deleted_or_private_status == 'ON' else "OFF"
             }
-            current_attribute_dict = {k: v for k, v in current_attribute_dict.items() if v is not "OFF"}
+            current_attribute_dict = {k: v for k, v in current_attribute_dict.items() if v != "OFF"}
             if attribute_dict != current_attribute_dict:
                 raise ValueError("Параметры состава транзакций выборок не совпадают")
     

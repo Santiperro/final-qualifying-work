@@ -2,10 +2,15 @@ window.onload = function() {
     if (window.location.pathname != '/request-data') {
         return;
     }
-    let today = new Date().toISOString().split('T')[0];
+    let today = new Date();
+    let sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(today.getMonth() - 3);
+    
+    today = new Date().toISOString().split('T')[0];
+
     document.getElementById('startDate').max = today;
     document.getElementById('endDate').max = today;
-    document.getElementById('startDate').value = today;
+    document.getElementById('startDate').value = sixMonthsAgo.toISOString().split('T')[0];
     document.getElementById('endDate').value = today;
 }
 
@@ -86,6 +91,7 @@ function toggleDivisionType(element, name) {
 
 function load_data_submit() {
     let errorDiv = document.getElementById('errorDiv');
+    let loadingMessage = document.getElementById('loadingMessage');
     errorDiv.style.display = 'none';
     validateDates('startDate');
     validateDates('endDate');
@@ -95,10 +101,11 @@ function load_data_submit() {
 
     let errorElements = document.querySelectorAll('.error');
     if (errorElements.length > 0) {
-        console.log(errorElements)
+        console.log(errorElements);
         errorDiv.style.display = 'block';
         return;
     }
+
     var selections = {};
     var rows = document.querySelectorAll('tbody tr');
     rows.forEach(function(row) {
@@ -138,6 +145,7 @@ function load_data_submit() {
         return;
     }
 
+    loadingMessage.style.display = 'block';
 
     fetch('/load-data-submit', {
         method: 'POST',
@@ -156,11 +164,12 @@ function load_data_submit() {
     .then((data) => {
         notification.textContent = "Данные успешно сохранены";
         notification.style.display = 'block';
-        
+        loadingMessage.style.display = 'none';
     })
     .catch((error) => {
         errorDiv.textContent = error.Error;
         errorDiv.style.display = 'block';
+        loadingMessage.style.display = 'none';
         console.error('Error:', error);
     });
 }
@@ -197,6 +206,7 @@ function getPatternWordEnding(number) {
 
 function find_patterns_submit() {
     let errorDiv = document.getElementById('errorDiv');
+    let loadingMessage = document.getElementById('loadingMessage');
     errorDiv.style.display = 'none';
 
     document.getElementById('filterAntecedent').style.display = 'none';
@@ -263,6 +273,8 @@ function find_patterns_submit() {
         ids: ids
     };
 
+    loadingMessage.style.display = 'block';
+
     fetch('/find-patterns-submit', {
         method: 'POST',
         headers: {
@@ -311,11 +323,13 @@ function find_patterns_submit() {
         }
 
         document.getElementById('QuantilesTableContainer').style.display = 'block';
+        loadingMessage.style.display = 'none';
     })
     .catch((error) => {
         errorDiv.textContent = error.Error;
         errorDiv.style.display = 'block';
         console.error('Error:', error);
+        loadingMessage.style.display = 'none';
     });
 }
 

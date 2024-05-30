@@ -72,6 +72,7 @@
             <input type="number" id="lift" min="-100" max="100" value="1" onchange="validateNumbers('lift', true)" />
         </div>
         <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
+        <div id="loadingMessage" class="loadingMessage" style="display: none;">Выполняется поиск...</div>
         <div id="errorDiv" class="errorDiv"></div>
         <h4 id="TableContainerName" style="display: none;"></h4>
         <div id="TableContainer" style="display: none;">
