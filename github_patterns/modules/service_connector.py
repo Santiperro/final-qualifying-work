@@ -20,7 +20,7 @@ from .exceptions import *
 class ServiceConnector():
     CLICKHOUSE_REQUEST_URL = 'https://play.clickhouse.com/play?user=play'
     GITHUB_API_REQUEST_URL = 'https://api.github.com/repos/{repo_name}'
-    REQUEST_DELAY = 10
+    REQUEST_DELAY = 20
     
     DEFAULT_LIMIT = 1000
     DEFAULT_WATCH_EVENT_COUNT = 10
