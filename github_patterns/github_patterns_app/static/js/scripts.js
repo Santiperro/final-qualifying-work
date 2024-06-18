@@ -213,8 +213,8 @@ function find_patterns_submit() {
     document.getElementById('filterConsequent').style.display = 'none';
     document.getElementById('TableContainer').style.display = 'none';
     document.getElementById('download').style.display = 'none';
-    document.getElementById('QuantilesTableContainer').style.display = 'none';
-    document.getElementById('toggleQuantilesBtn').style.display = 'none';
+    // document.getElementById('QuantilesTableContainer').style.display = 'none';
+    // document.getElementById('toggleQuantilesBtn').style.display = 'none';
     document.getElementById('TableContainerName').style.display = 'none';
 
     validateNumbers('antecedent', false);
@@ -250,7 +250,7 @@ function find_patterns_submit() {
 
     let ids = selectedRows;
     if (ids.length === 0) {
-        errorDiv.textContent = 'Выберите минимум одну выборку';
+        errorDiv.textContent = 'Выберите минимум один набор данных';
         errorDiv.style.display = 'block';
         return; 
     }
@@ -294,7 +294,7 @@ function find_patterns_submit() {
         document.getElementById('filterConsequent').style.display = 'inline-block';
         document.getElementById('TableContainer').style.display = 'block';
         document.getElementById('download').style.display = 'block';
-        document.getElementById('toggleQuantilesBtn').style.display = 'block';
+        // document.getElementById('toggleQuantilesBtn').style.display = 'block';
         document.getElementById('TableContainerName').style.display = 'block';
         
         let tbody = document.getElementById('PatternsTable').getElementsByTagName('tbody')[0];
@@ -322,7 +322,7 @@ function find_patterns_submit() {
             populateTable('DecilesTable', 'DecilesTableHeader', data.deciles);
         }
 
-        document.getElementById('QuantilesTableContainer').style.display = 'block';
+        // document.getElementById('QuantilesTableContainer').style.display = 'block';
         loadingMessage.style.display = 'none';
     })
     .catch((error) => {
@@ -429,7 +429,12 @@ function filterTable() {
                 }
 
                 const txtValue = td.textContent || td.innerText;
-                const isMatch = txtValue.toLowerCase().indexOf(filter) > -1;
+                const filterSubstrings = filter.split('&');
+                let isMatch = false;
+                for (let k = 0; k < filterSubstrings.length; k++) {
+                    isMatch = txtValue.toLowerCase().indexOf(filterSubstrings[k]) > -1;
+                    if (!isMatch) break;
+                }
                 if ((isNegativeFilter && isMatch) || (!isNegativeFilter && !isMatch)) {
                     isVisible = false;
                     break;

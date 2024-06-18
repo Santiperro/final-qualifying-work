@@ -70,7 +70,7 @@ def load_data_submit(request):
             save_time=datetime.now(),
             start_date=request_params["startDate"],
             end_date=request_params["endDate"],
-            repos_count=request_params["numRepos"],
+            repos_count=len(github_data),
             min_members_count=request_params["minParticipants"],
             min_watch_count=request_params["minStars"],
             is_new_repos=request_params["isNewRepos"],
@@ -170,8 +170,8 @@ def find_patterns_submit(request):
         else:
             response_data = {
                 'patterns': github_patterns.to_dict(orient='records'),
-                'quartiles': quartiles.to_dict(orient='records') if quartiles is not None else [],
-                'deciles': deciles.to_dict(orient='records') if deciles is not None else []
+                # 'quartiles': quartiles.to_dict(orient='records') if quartiles is not None else [],
+                # 'deciles': deciles.to_dict(orient='records') if deciles is not None else []
             }
             return JsonResponse(response_data, safe=False)
         
@@ -222,7 +222,7 @@ def get_github_repository_data(sample_ids):
             }
             current_attribute_dict = {k: v for k, v in current_attribute_dict.items() if v != "OFF"}
             if attribute_dict != current_attribute_dict:
-                raise ValueError("Параметры состава транзакций выборок не совпадают")
+                raise ValueError("Параметры атрибутов данных не совпадают")
     
     if df.empty:
         raise EmptyTableError("Данные не получены. Перезагрузите страницу, и выберите заново")

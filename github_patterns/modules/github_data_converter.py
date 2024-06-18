@@ -8,6 +8,10 @@ class GithubDataConverter():
     
     def __init__(self):
         self.data_configuration = pd.read_json(r"dtype_conf.json")
+        self.column_name_short_decode_dict = {}
+        for name, decode_name in zip(self.data_configuration["columnName"], 
+                                    self.data_configuration["shortDecode"]):
+            self.column_name_short_decode_dict[name] = decode_name
 
     def convert_data_to_transactions(self, 
                                      repos_data:pd.DataFrame, 
@@ -28,6 +32,12 @@ class GithubDataConverter():
         'license_name': 'None',
         'is_deleted_or_private': 'None'}
         """
+        quantile_config_keys = quantile_config.keys()
+        
+        # for column_name in quantile_config_keys:
+        #     if column_name in self.column_name_short_decode_dict:
+        #         quantile_config[self.column_name_short_decode_dict[column_name]] = quantile_config.pop(column_name)
+        
         cleaned_data = self._clean_data(repos_data, quantile_config)
 
         quantile_column_values = self.__find_quantiles(cleaned_data, 
@@ -78,14 +88,15 @@ class GithubDataConverter():
             return quntile_table
         
         # Разделение на 2 таблицы 
-        print(quantile_table)
+
         formatted_table = quantile_table.copy()
-        print(quantile_config)
+        # print(quantile_config)
+        # print(quantile_table)
         quartiles = formatted_table[[column for column in formatted_table.columns if quantile_config.get(column) == 'qua']].dropna()
         deciles = quantile_table[[column for column in quantile_table.columns if quantile_config.get(column) == 'dec']].dropna()
 
-        print(quartiles)
-        print(deciles)
+        # print(quartiles)
+        # print(deciles)
 
         # Редактирование вида таблиц
         quartiles = edit_for_user_view(quartiles, column_name='№ Квартиля')
@@ -104,13 +115,11 @@ class GithubDataConverter():
                 
         if 'language' in edited_column_names.columns:
             edited_column_names['language'] = edited_column_names['language'].apply(
-                lambda x: 'Язык_' + x if x != 'None' and x != None else x)
+                lambda x: 'language_' + x if x != 'None' and x != None else x)
                 
         if 'license_name' in edited_column_names.columns:
             edited_column_names['license_name'] = edited_column_names['license_name'].apply(
-                lambda x: 'Лицензия_' + x if x != 'None' and x != None else x)
-            
-            edited_column_names['license_name'] = edited_column_names['license_name'].replace([None, 'None'], 'No license')
+                lambda x: 'license_' + x.replace('License', '') if x != 'None' and x is not None else x)
             
         return edited_column_names
     
@@ -152,14 +161,18 @@ class GithubDataConverter():
     
     def _clean_data(self, repo_data, quantile_config):
         clean_data = repo_data.drop_duplicates()
+        
         for column in clean_data.columns:
             if (not column in self.data_configuration["columnName"].values 
                 or not column in quantile_config 
                 or clean_data[column].isnull().all() 
                 or (clean_data[column] == 'None').all() 
-                or (clean_data[column] == 0).all()):
+                or (clean_data[column] == 0).mean() > 0.5):
                 
                 clean_data.drop(column, axis=1, inplace=True)
+                
+            # if column in self.column_name_short_decode_dict:
+            #     clean_data.rename(columns={column: self.column_name_short_decode_dict[column]}, inplace=True)
         return clean_data
     
     def __format_column_names(self, transaction_data):

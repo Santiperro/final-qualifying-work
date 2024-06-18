@@ -14,11 +14,13 @@
 <body>
     <header>
         <nav>
+            <div class="logo">
+                Система поиска шаблонов в данных GitHub
+            </div>
             <ul>
                 <li><a href="{% url 'find_patterns' %}">Поиск шаблонов</a></li>
                 <li><a href="{% url 'request_data' %}">Получение данных</a></li>
             </ul>
-            {% comment %} <button>Кнопка 1</button> {% endcomment %}
         </nav>
     </header>
     <main>

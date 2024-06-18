@@ -1,7 +1,7 @@
 [
     {
         "columnName": "pushes",
-        "shortDecode": "Pushes",
+        "shortDecode": "Изменений",
         "decode": "Отправленные изменения (Pushes)",
         "source": "clickhousePlayground",
         "dtype": "int",
@@ -9,7 +9,7 @@
     },
     {
         "columnName": "avg_push_size",
-        "shortDecode": "Ср. размер push",
+        "shortDecode": "Ср. размер изменений",
         "decode": "Средний размер изменений",
         "source": "clickhousePlayground",
         "dtype": "float",
@@ -17,7 +17,7 @@
     },
     {
         "columnName": "pull_requests",
-        "shortDecode": "Pull requests",
+        "shortDecode": "Запросы на изменения",
         "decode": "Запросы на изменения (Pull requests)",
         "source": "clickhousePlayground",
         "dtype": "int",
@@ -25,7 +25,7 @@
     },
     {
         "columnName": "merged_pull_requests_ratio",
-        "shortDecode": "Слитых PR ко всем",
+        "shortDecode": "Слитых запросов на изм. ко всем",
         "decode": "Соотношение слитых запросов на изменения ко всем",
         "source": "clickhousePlayground",
         "dtype": "float",
@@ -33,7 +33,7 @@
     },
     {
         "columnName": "issues",
-        "shortDecode": "Issues",
+        "shortDecode": "Проблемы",
         "decode": "Вопросов к репозиторию (Issues)",
         "source": "clickhousePlayground",
         "dtype": "int",
@@ -41,7 +41,7 @@
     },
     {
         "columnName": "closed_issues_ratio",
-        "shortDecode": "Закр. issue ко всем",
+        "shortDecode": "Закр. проблемы ко всем",
         "decode": "Соотношение закрытых issue ко всем",
         "source": "clickhousePlayground",
         "dtype": "float",
@@ -49,7 +49,7 @@
     },
     {
         "columnName": "watches",
-        "shortDecode": "Stars",
+        "shortDecode": "Звезды",
         "decode": "Звезд репозитория",
         "source": "clickhousePlayground",
         "dtype": "int",
@@ -57,7 +57,7 @@
     },
     {
         "columnName": "forks",
-        "shortDecode": "Forks",
+        "shortDecode": "Ветвления",
         "decode": "Ветвления репозитория (Forks)",
         "source": "clickhousePlayground",
         "dtype": "int",
@@ -65,7 +65,7 @@
     },
     {
         "columnName": "new_members",
-        "shortDecode": "Новых уч-ов",
+        "shortDecode": "Новые участники",
         "decode": "Новых участников",
         "source": "clickhousePlayground",
         "dtype": "int",

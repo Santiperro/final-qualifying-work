@@ -14,7 +14,7 @@
                     <th>Мин. участников</th>
                     <th>Мин. звезд</th>
                     <th>Период</th>
-                    <th>Использовать выборку</th>
+                    <th>Выбрать данные</th>
                     <th>Удалить</th>
                 </tr>
             </thead>
@@ -41,7 +41,7 @@
             </tbody>
         </table>
         {% endif %}
-        <button class="new-sample-button" onclick="window.location.href='/request-data'">Получить новую выборку</button>
+        <button class="new-sample-button" onclick="window.location.href='/request-data'">Получить новые данные</button>
         <h4>Выберите параметры поиска шаблонов</h4>
         <div class="input-group">
             <label for="antecedent">Минимально элементов антецедента:</label>
@@ -60,16 +60,16 @@
             <input type="number" id="consequent_max" min="1" max="10" value="3" onchange="validateNumbers('consequent-max')" />
         </div>
         <div class="input-group">
-            <label for="minsup">Минимальная поддержка:</label>
+            <label for="minsup">Порог поддержки:</label>
             <input type="number" id="minsup" min="0.001" max="1" value="0.1" onchange="validateNumbers('minsup', true)" />
         </div>
         <div class="input-group">
-            <label for="minconf">Минимальная достоверность:</label>
+            <label for="minconf">Порог достоверности:</label>
             <input type="number" id="minconf" min="0.001" max="1" value="0.1" onchange="validateNumbers('minconf', true)" />
         </div>
         <div class="input-group">
-            <label for="lift">Минимальный подъем:</label>
-            <input type="number" id="lift" min="-100" max="100" value="1" onchange="validateNumbers('lift', true)" />
+            <label for="lift">Порог подъема:</label>
+            <input type="number" id="lift" min="0" max="1000000" value="1" onchange="validateNumbers('lift', true)" />
         </div>
         <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
         <div id="loadingMessage" class="loadingMessage" style="display: none;">Выполняется поиск...</div>
@@ -135,12 +135,12 @@
         </div>
         <div id="buttonContainer">
             <button id="download" style="display: none;">Скачать шаблоны</button>
-            <button id="toggleQuantilesBtn" onclick="toggleQuantiles()" style="display: none;">
+            {% comment %} <button id="toggleQuantilesBtn" onclick="toggleQuantiles()" style="display: none;">
                 <span id="toggleIcon">⯈</span>
                 <span id="toggleText">Показать таблицу квартилей и децилей</span>
-            </button>
+            </button> {% endcomment %}
         </div>
-        <div id="QuantilesTableContainer" style="display: none;">
+        {% comment %} <div id="QuantilesTableContainer" style="display: none;">
             <div id="QuantilesTables" style="display: none;">
                 <div id="QuartilesTableContainer">
                     <table id="QuartilesTable">
@@ -161,7 +161,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
         <div id="spacer" style="height: 20px;"></div>
     </div>
 </div>
