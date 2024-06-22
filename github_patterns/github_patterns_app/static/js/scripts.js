@@ -225,6 +225,13 @@ function find_patterns_submit() {
     validateNumbers('minconf', true);
     validateNumbers('lift', true);
 
+    let errorElements = document.querySelectorAll('.error');
+    if (errorElements.length > 0) {
+        console.log(errorElements);
+        errorDiv.style.display = 'block';
+        return; 
+    }
+
     if (Number(document.getElementById('antecedent').value) > Number(document.getElementById('antecedent_max').value)) {
         errorDiv.textContent = 'Минимальное значение не может быть больше максимального';
         errorDiv.style.display = 'block';
@@ -241,7 +248,7 @@ function find_patterns_submit() {
     }
     document.getElementById('consequent').classList.remove('error')
 
-    let errorElements = document.querySelectorAll('.error');
+    errorElements = document.querySelectorAll('.error');
     if (errorElements.length > 0) {
         console.log(errorElements);
         errorDiv.style.display = 'block';
