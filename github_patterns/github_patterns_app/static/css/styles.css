@@ -1,0 +1,523 @@
+/* CSS */
+
+dl, ol, ul, div, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+
+header {
+    background-color: lightgray;
+}
+
+nav {
+    position: fixed; 
+    top: 0; 
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center; 
+    padding: 0 300px;
+    background-color: lightgray; 
+    z-index: 1;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+    align-items: center;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+}
+
+nav a:hover {
+    border-bottom: 2px solid black;
+}
+
+.logo {
+    margin-left: 20px;
+    cursor: default;
+}
+
+.logo a {
+    color: black;
+    text-decoration: none;
+}
+
+/* Request data page */
+
+.requestpagecontent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    padding-top: 150px; 
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.container h4 {
+    margin-top: 20px;
+}
+
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    position: relative;
+}
+
+.errorDiv {
+    width: 400px;
+    padding: 10px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+}
+
+.notification {
+    width: 400px;
+    padding: 10px;
+    background-color: #6eff6e;
+    color: #000000;
+    border: 1px solid #6eff6e;
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+}
+
+.input-group input[type="date"].error {
+    border: 2px solid rgb(224, 0, 0); 
+    outline: none;
+}
+
+.input-group input[type="number"] {
+    width: 50px;
+}
+
+.input-group input[type="number"].error {
+    border: 2px solid red;
+    outline: none; 
+}
+
+.input-group input[type="number"]::-webkit-inner-spin-button,
+.input-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-group input[type="radio"] {
+    width: auto;
+}
+
+.input-group input[type="text"] {
+    width: 200px;
+}
+
+.radio-group {
+    margin-top: -10px; 
+} 
+
+/* Table */
+
+#LoadDataParamsTable {
+    display: block;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar {
+    width: 10px;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#LoadDataParamsTable::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#LoadDataParamsTable th, #LoadDataParamsTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#LoadDataParamsTable th {
+    text-align: center;
+    min-width: 127px;
+}
+
+#LoadDataParamsTable td:nth-child(3) {
+    text-align: center;
+}
+
+.clickable {
+    cursor: pointer;
+    color: black;
+    text-decoration: underline;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px; 
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px; 
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
+input:checked + .slider {
+    background-color: rgb(140, 140, 140);
+}
+
+.slider.round {
+    border-radius: 20px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#getGithubDataButton {
+    padding: 5px 20px;
+    font-size: 16px; 
+    border: 2px solid #333; 
+    background-color: #f8f8f8;
+    color: #333; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+}
+
+#getGithubDataButton:hover {
+    background-color: #ddd; 
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.loadingMessage {
+    animation: blink 1s linear infinite;
+}
+
+/* find_patterns page */
+
+.findpagecontent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    padding-top: 150px; 
+}
+
+#SamplesTable {
+    display: block;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+#SamplesTable::-webkit-scrollbar {
+    width: 10px;
+}
+
+#SamplesTable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#SamplesTable::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#SamplesTable::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#SamplesTable th, #SamplesTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+#SamplesTable th {
+    min-width: 127px;
+}
+
+#SamplesTable td:first-child {
+    text-align: left;
+}
+
+.new-sample-button {
+    padding: 5px 20px; 
+    font-size: 16px; 
+    border: 2px solid #333;
+    background-color: #f8f8f8; 
+    color: #333; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+}
+
+.delete-button:hover {
+    color: red; 
+}
+
+#findPatternsButton {
+    padding: 5px 20px; 
+    font-size: 16px; 
+    border: 2px solid #333; 
+    background-color: #f8f8f8; 
+    color: #333; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+}
+
+#findPatternsButton:hover {
+    background-color: #ddd;
+}
+
+#TableContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+#PatternsTable {
+    max-height: 500px;
+    overflow-y: auto;
+    display: table;
+    width: 100%; 
+    border-collapse: collapse;
+}
+
+#PatternsTable th, #PatternsTable td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    position: relative; 
+    top: -1px; 
+}
+
+#PatternsTable::-webkit-scrollbar {
+    width: 10px;
+}
+
+#PatternsTable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#PatternsTable td:first-child,
+#PatternsTable td:nth-child(2) {
+    text-align: left; 
+}
+
+#PatternsTable::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#PatternsTable::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#PatternsTable th {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 8px;
+    z-index: 2;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+#PatternsTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    position: relative;
+    top: -1px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.header-content input[type="text"] {
+    margin-left: 10px;
+    padding: 4px;
+    width: 50%; 
+    box-sizing: border-box;
+}
+
+.header-content .sort-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 5px;
+}
+
+#PatternsTable th button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px;
+}
+
+#PatternsTable th::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #ddd;
+}
+
+#PatternsTable th::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#filterAntecedent,
+#filterConsequent {
+    display: block;
+    margin: 10px 0;
+    padding: 5px;
+    width: calc(50% - 10px); 
+}
+
+#downloadButtonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+#download:hover {
+    background-color: #ddd;
+}
+
+#QuantilesTableContainer {
+    display: block;
+    overflow: auto;
+}
+
+#downloadButton,  #toggleQuantilesButton {
+    padding: 5px 20px;
+    font-size: 16px; 
+    border: 2px solid #333;
+    background-color: #f8f8f8; 
+    color: #333;
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    margin: 0 10px;
+}
+
+#QuantilesTables {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    text-align: center;
+}
+
+#QuartilesTableContainer, #DecilesTableContainer {
+    display: inline-block;
+    margin: 0 10px;
+    min-width: 300px;
+    vertical-align: top; 
+}
+
+#QuantilesTableContainer table {
+    width: auto;
+    white-space: nowrap;
+}
+#QuantilesTableContainer table th, #QuantilesTableContainer table td:first-child {
+    text-align: center;
+}
+
+#QuantilesTableContainer table td {
+    text-align: right;
+}
+
+#QuantilesTableContainer th,
+#QuantilesTableContainer td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: right; 
+}

@@ -1,0 +1,104 @@
+[
+    {
+        "columnName": "pushes",
+        "shortDecode": "Изменений",
+        "decode": "Отправленные изменения (Pushes)",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0,
+        "joinQuery": "PUSH_EVENTS_QUERY"
+    },
+    {
+        "columnName": "avg_push_size",
+        "shortDecode": "Ср. размер изменений",
+        "decode": "Средний размер изменений",
+        "source": "clickhousePlayground",
+        "dtype": "float",
+        "decimalPlaces": 2,
+        "joinQuery": "PUSH_EVENTS_QUERY"
+    },
+    {
+        "columnName": "pull_requests",
+        "shortDecode": "Запросы на изменения",
+        "decode": "Запросы на изменения (Pull requests)",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0, 
+        "joinQuery": "PULL_REQUEST_EVENTS_QUERY"
+    },
+    {
+        "columnName": "merged_pull_requests_ratio",
+        "shortDecode": "Слитых запросов на изм. ко всем",
+        "decode": "Соотношение слитых запросов на изменения ко всем",
+        "source": "clickhousePlayground",
+        "dtype": "float",
+        "decimalPlaces": 2, 
+        "joinQuery": "PULL_REQUEST_EVENTS_QUERY"
+    },
+    {
+        "columnName": "issues",
+        "shortDecode": "Проблемы",
+        "decode": "Вопросов к репозиторию (Issues)",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0, 
+        "joinQuery": "ISSUES_EVENTS_QUERY"
+    },
+    {
+        "columnName": "closed_issues_ratio",
+        "shortDecode": "Закр. проблемы ко всем",
+        "decode": "Соотношение закрытых issue ко всем",
+        "source": "clickhousePlayground",
+        "dtype": "float",
+        "decimalPlaces": 2, 
+        "joinQuery": "ISSUES_EVENTS_QUERY"
+    },
+    {
+        "columnName": "watches",
+        "shortDecode": "Звезды",
+        "decode": "Звезд репозитория",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0, 
+        "joinQuery": "WATCH_EVENTS_QUERY"
+    },
+    {
+        "columnName": "forks",
+        "shortDecode": "Ветвления",
+        "decode": "Ветвления репозитория (Forks)",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0,
+        "joinQuery": "FORK_EVENTS_QUERY"
+    },
+    {
+        "columnName": "new_members",
+        "shortDecode": "Новые участники",
+        "decode": "Новых участников",
+        "source": "clickhousePlayground",
+        "dtype": "int",
+        "decimalPlaces": 0,
+        "joinQuery": "NEW_MEMBER_EVENTS_QUERY"
+    },
+    {
+        "columnName": "language",
+        "shortDecode": "Язык",
+        "decode": "Язык программирования репозитория",
+        "source": "githubApi",
+        "dtype": "str"
+    },
+    {
+        "columnName": "license_name",
+        "shortDecode": "Лиц-ия",
+        "decode": "Лицензия репозитория",
+        "source": "githubApi",
+        "dtype": "str"
+    },
+    {
+        "columnName": "is_deleted_or_private",
+        "shortDecode": "Удален/Закрыт",
+        "decode": "Репозиторий удален или закрыт",
+        "source": "githubApi",
+        "dtype": "bool"
+    }
+]

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="findpagecontent">
+    <div class="container">
+        <h4>Выберите данные для поиска шаблонов</h4>
+        {% if samples %}
+        <table id="SamplesTable">
+            <thead>
+                <tr>
+                    <th>Заметка</th>
+                    <th>Время загрузки</th>
+                    <th>Число реп-ев</th>
+                    <th>Мин. участников</th>
+                    <th>Мин. звезд</th>
+                    <th>Период</th>
+                    <th>Выбрать данные</th>
+                    <th>Удалить</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sample in samples %}
+                <tr id="{{ sample.id }}">
+                    <td>{{ sample.note }}</td>
+                    <td>{{ sample.save_time }}</td>
+                    <td>{{ sample.repos_count }}</td>
+                    <td>{{ sample.min_members_count }}</td>
+                    <td>{{ sample.min_watch_count }}</td>
+                    <td>{{ sample.start_date|date:"Y-m-d" }} - {{ sample.end_date|date:"Y-m-d" }}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" onclick="toggleSelection(this, '{{ sample.id }}')">
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <button class="delete-button" data-id="{{ sample.id }}">❌</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <button class="new-sample-button" onclick="window.location.href='/request-data'">Получить новые данные</button>
+        <h4>Выберите параметры поиска шаблонов</h4>
+        <div class="input-group">
+            <label for="antecedent">Минимально элементов антецедента:</label>
+            <input type="number" id="antecedent" min="1" max="10" value="1" onchange="validateNumbers('antecedent')" />
+        </div>
+        <div class="input-group">
+            <label for="antecedent_max">Максимально элементов антецедента:</label>
+            <input type="number" id="antecedent_max" min="1" max="10" value="3" onchange="validateNumbers('antecedent_max')" />
+        </div>
+        <div class="input-group">
+            <label for="consequent">Минимально элементов консеквента:</label>
+            <input type="number" id="consequent" min="1" max="10" value="1" onchange="validateNumbers('consequent')" />
+        </div>
+        <div class="input-group">
+            <label for="consequent_max">Максимально элементов консеквента:</label>
+            <input type="number" id="consequent_max" min="1" max="10" value="3" onchange="validateNumbers('consequent_max')" />
+        </div>
+        <div class="input-group">
+            <label for="minsup">Порог поддержки:</label>
+            <input type="number" id="minsup" min="0.001" max="1" value="0.1" onchange="validateNumbers('minsup', true)" />
+        </div>
+        <div class="input-group">
+            <label for="minconf">Порог достоверности:</label>
+            <input type="number" id="minconf" min="0.001" max="1" value="0.1" onchange="validateNumbers('minconf', true)" />
+        </div>
+        <div class="input-group">
+            <label for="lift">Порог подъема:</label>
+            <input type="number" id="lift" min="0" max="1000000" value="1" onchange="validateNumbers('lift', true)" />
+        </div>
+        <button id="findPatternsButton" onclick="find_patterns_submit()">Найти шаблоны</button>
+        <div id="loadingMessage" class="loadingMessage" style="display: none;">Выполняется поиск...</div>
+        <div id="errorDiv" class="errorDiv"></div>
+        <h4 id="TableContainerName" style="display: none;"></h4>
+        <div id="TableContainer" style="display: none;">
+            <table id="PatternsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="header-content">
+                                <span>Антецедент</span>
+                                <input type="text" id="filterAntecedent" placeholder="Фильтр">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Консеквент</span>
+                                <input type="text" id="filterConsequent" placeholder="Фильтр">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Поддержка</span>
+                                <div class="sort-buttons">
+                                    <button onclick="sortTable(2, true)">▲</button>
+                                    <button onclick="sortTable(2, false)">▼</button>
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Достоверность</span>
+                                <div class="sort-buttons">
+                                    <button onclick="sortTable(3, true)">▲</button>
+                                    <button onclick="sortTable(3, false)">▼</button>
+                                </div>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="header-content">
+                                <span>Подъем</span>
+                                <div class="sort-buttons">
+                                    <button onclick="sortTable(4, true)">▲</button>
+                                    <button onclick="sortTable(4, false)">▼</button>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pattern in patterns %}
+                    <tr>
+                        <td>{{ pattern.antecedents }}</td>
+                        <td>{{ pattern.consequents }}</td>
+                        <td>{{ pattern.support }}</td>
+                        <td>{{ pattern.confidence }}</td>
+                        <td>{{ pattern.lift }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="downloadButtonContainer">
+            <button id="downloadButton" style="display: none;">Скачать шаблоны</button>
+            <button id="toggleQuantilesButton" onclick="toggleQuantiles()" style="display: none;">
+                <span id="toggleIcon">⯈</span>
+                <span id="toggleText">Показать таблицу квартилей и децилей</span>
+            </button> 
+        </div>
+        <div id="QuantilesTableContainer" style="display: none;">
+            <div id="QuantilesTables" style="display: none;">
+                <div id="QuartilesTableContainer">
+                    <table id="QuartilesTable">
+                        <thead>
+                            <tr id="QuartilesTableHeader"></tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="DecilesTableContainer">
+                    <table id="DecilesTable">
+                        <thead>
+                            <tr id="DecilesTableHeader"></tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="spacer" style="height: 20px;"></div>
+    </div>
+</div>
+{% endblock %}

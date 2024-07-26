@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="requestpagecontent">
+    <div class="container">
+        <h4>Выберите параметры загружаемых данных:</h4>
+        <div class="input-group">
+            <label>Начальная дата:</label>
+            <input type="date" id="startDate" name="trip-start" min="2015-01-01" oninput="validateDates('startDate')" />
+        </div>
+        <div class="input-group">
+            <label>Конечная дата:</label>
+            <input type="date" id="endDate" name="trip-end" min="2015-01-01" oninput="validateDates('endDate')" />
+        </div>
+        <div class="input-group">
+            <label for="numRepos">Число репозиториев:</label>
+            <input type="number" id="numRepos" min="200" max="5000" value="1000" oninput="validateNumbers('numRepos')" />
+        </div>
+        <div class="input-group">
+            <label for="minStars">Мин. число звезд репозитория:</label>
+            <input type="number" id="minStars" min="0" max="99999" value="100" oninput="validateNumbers('minStars')" />
+        </div>
+        <div class="input-group">
+            <label for="minParticipants">Мин. число участников репозитория:</label>
+            <input type="number" id="minParticipants" min="1" max="9999" value="1" oninput="validateNumbers('minParticipants')" />
+        </div>
+        <div class="input-group">
+            <label>Новые репозитории:</label>
+            <input type="radio" name="choice" />
+        </div>
+        <div class="input-group radio-group">
+            <label>Все репозитории:</label>
+            <input type="radio" name="choice" checked />
+        </div>
+        <div class="input-group">
+            <label>Выберите атрибуты данных и вид дискретизации:</label>
+        </div>
+        <table id="LoadDataParamsTable">
+            <thead>
+                <tr>
+                    <th>Имя атрибута</th>
+                    <th>Вид дискретизации</th>
+                    <th>Включить</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item, dtype in items.items %}
+                <tr>
+                    <td>{{ item }}</td>
+                    <td class="clickable" onclick="toggleDivisionType(this, '{{ item }}')">{% if dtype == 'int' or dtype == 'float' %}Квартили{% else %}-{% endif %}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="input-group">
+            <label>Добавить заметку:</label>
+            <input type="text" />
+        </div>
+        <button id="getGithubDataButton" onclick="load_data_submit()">Загрузить данные</button>
+        <div id="loadingMessage" class="loadingMessage" style="display: none;">Загрузка данных...</div>
+        <div id="errorDiv" class="errorDiv"></div>
+        <div id="notification" class="notification"></div>
+        <div id="spacer" style="height: 20px;"></div>
+    </div>
+</div>
+{% endblock %}
