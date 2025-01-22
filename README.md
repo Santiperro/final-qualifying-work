@@ -11,5 +11,5 @@
 
 ### Установка
 1. Выполните `sudo docker compose build`
-2. Выполните `export GITHUB_KEY={ваш GitHub API ключ}` для запроса дополнительных данных из API GitHub
+2. Выполните `export GITHUB_KEY={ваш GitHub API ключ}` для запроса данных из API GitHub
 3. Выполните `sudo -E docker compose up` для запуска приложения
