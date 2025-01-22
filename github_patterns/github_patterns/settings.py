@@ -28,9 +28,9 @@ if SECRET_KEY is None or SECRET_KEY == '':
     print('The secret key has been generated in .env')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 # Application definition
 

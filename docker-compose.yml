@@ -1,0 +1,44 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=github_data
+      - DB_USER=github_admin
+      - DB_PASSWORD=root
+      - DB_HOST=db
+      - DB_PORT=5432
+    stdin_open: true
+    tty: true 
+    command: >
+      sh -c "
+        mkdir -p github_patterns &&
+        touch github_patterns/.env &&
+        echo 'DEBUG: GITHUB_KEY=${GITHUB_KEY}' &&
+        if [ ! -f github_patterns/.env ] || ! grep -q 'GITHUB_KEY=' github_patterns/.env; then
+          echo \"GITHUB_KEY=${GITHUB_KEY}\" >> github_patterns/.env
+        fi &&
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+
+  db:
+    image: postgres:16
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: github_admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: github_data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

@@ -1,4 +1,6 @@
 import pandas as pd
+import tempfile
+import shutil
 from datetime import datetime
 import aiohttp
 import asyncio
@@ -245,6 +247,12 @@ class ServiceConnector():
         options.add_argument("--headless")
         options.add_argument("--window-size=1920x1080")
         options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        
+        user_data_dir = tempfile.mkdtemp()
+        options.add_argument(f"--user-data-dir={user_data_dir}")
+        
         driver = webdriver.Chrome(options=options)
         driver.get(self.CLICKHOUSE_REQUEST_URL)
 
@@ -260,11 +268,13 @@ class ServiceConnector():
                 lambda d: d.find_element(By.ID, 'error').is_displayed()
             ))
         except TimeoutException:
+            shutil.rmtree(user_data_dir)
             driver.quit()
             raise EmptyTableError("Слишком сложный запрос, данные не получены.\
                 Попробуйте изменить параметры запроса")
         
         if "empty result" in driver.find_element(By.ID, 'data-table').get_attribute('innerHTML'):
+            shutil.rmtree(user_data_dir)
             driver.quit()
             raise EmptyTableError("Данные не получены. Попробуйте изменить \
                 параметры запроса, чтобы в выборку попало больше репозиториев")
@@ -272,6 +282,7 @@ class ServiceConnector():
         error_element = driver.find_element(By.ID, 'error')
         if error_element.is_displayed():
             error_text = error_element.text
+            shutil.rmtree(user_data_dir)
             driver.quit()
             raise EmptyTableError(f"Ошибка сервиса ClickHouse: \"{error_text}\"\
                 Попробуйте изменить параметры запроса")
@@ -279,6 +290,8 @@ class ServiceConnector():
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, 'html.parser')
         table = soup.find('table', {'id': 'data-table'})
+        
+        shutil.rmtree(user_data_dir)
         driver.quit()
    
         header_elements = table.find_all('th')[1:]

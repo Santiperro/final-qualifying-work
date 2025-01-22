@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "final-qualifying-work"
+version = "0.1.0"
+description = ""
+authors = ["Santiperro <egor.ev22@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.11"
+aiohttp = "3.9.5"
+beautifulsoup4 = "4.12.3"
+django = "5.0.6"
+django-environ = "0.11.2"
+mlxtend = "0.23.1"
+numpy = "2.0.0"
+pandas = "2.2.2"
+selenium = "4.22.0"
+psycopg2-binary = "^2.9.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
