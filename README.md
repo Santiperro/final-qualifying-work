@@ -9,7 +9,12 @@
 - BeautifulSoup4, Selenium, aiohttp
 - PostgreSQL
 
-### Установка
+### Установка Linux
 1. Выполните `sudo docker compose build`
 2. Выполните `export GITHUB_KEY={ваш GitHub API ключ}` для запроса данных из API GitHub
 3. Выполните `sudo -E docker compose up` для запуска приложения
+
+### Установка Windows CMD
+1. Выполните `docker compose build`
+2. Выполните `set GITHUB_KEY={ваш GitHub API ключ}` для запроса данных из API GitHub
+3. Выполните `docker compose up` для запуска приложения
